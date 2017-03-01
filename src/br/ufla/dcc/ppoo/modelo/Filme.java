@@ -14,6 +14,8 @@ package br.ufla.dcc.ppoo.modelo;
  * Atributos
  */
 public class Filme {
+    
+    private int id;
     private String nome;
     private String genero;
     private int ano;
@@ -30,6 +32,15 @@ public class Filme {
      */
     
     public Filme( String nome, String genero, int ano, int duracao, String descricao){
+        this.nome = nome;
+        this.genero = genero;
+        this.ano = ano;
+        this.duracao = duracao;
+        this.descricao = descricao;
+    }
+    
+    public Filme(int id, String nome, String genero, int ano, int duracao, String descricao){
+        this.id = id;
         this.nome = nome;
         this.genero = genero;
         this.ano = ano;
@@ -105,6 +116,20 @@ public class Filme {
      */
     public void setDescricao(String descricao) {
         this.descricao = descricao;
+    }
+
+    /**
+     * @return the id
+     */
+    public int getId() {
+        return id;
+    }
+
+    /**
+     * @param id the id to set
+     */
+    public void setId(int id) {
+        this.id = id;
     }
 
 }

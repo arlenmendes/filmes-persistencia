@@ -7,6 +7,8 @@ package br.ufla.dcc.ppoo.servicos;
 
 import br.ufla.dcc.ppoo.dao.FilmeDAO;
 import br.ufla.dcc.ppoo.modelo.Filme;
+import java.sql.SQLException;
+import java.util.List;
 
 /**
  *
@@ -19,7 +21,16 @@ public class GerenciadorFilmes {
         repositorioFilme = new FilmeDAO();
     }
     
-    public void cadastrarFilme(Filme f){
-        
+    public void cadastrarFilme(Filme f) throws SQLException{
+        repositorioFilme.adicionar(f);
     }
+    
+    public void atualizarFilme(Filme f) throws SQLException{
+        repositorioFilme.alterar(f);
+    }
+    
+    public List<Filme> buscarTodosFilmes() throws SQLException{
+        return repositorioFilme.buscarTodos();
+    }
+    
 }

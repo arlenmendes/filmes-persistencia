@@ -54,12 +54,58 @@ public class FilmeDAO {
             ResultSet resultado = comando.executeQuery(sql);
             
             while(resultado.next()){
-                filmes.add(new Filme(resultado.getString("nome"), resultado.getString("genero"), resultado.getInt("ano"), resultado.getInt("duracao"), resultado.getString("descricao")));
+                filmes.add(new Filme(resultado.getInt("id"), resultado.getString("nome"), resultado.getString("genero"), resultado.getInt("ano"), resultado.getInt("duracao"), resultado.getString("descricao")));
             }
         } else {
             JOptionPane.showMessageDialog(null, "Erro com a conexao ao Banco de Dados.");
         }
         
         return filmes;
+    }
+    
+    public Filme buscarPorId(int id) throws SQLException {
+        conectar();
+        if(conexao != null){
+            Statement comando = conexao.createStatement();
+            String sql = "SELECT * FROM filme where id = " + id + ";";
+            
+            ResultSet resultado = comando.executeQuery(sql);
+            Filme f = null;
+            while(resultado.next()){
+                f = new Filme(resultado.getInt("id"), resultado.getString("nome"), resultado.getString("genero"), resultado.getInt("ano"), resultado.getInt("duracao"), resultado.getString("descricao"));
+            }
+            
+            comando.close();
+            Conexao.fecharConexao();
+            return f;
+            
+        } else {
+            JOptionPane.showMessageDialog(null, "Erro com a conexao ao Banco de Dados.");
+            return null;
+        }
+        
+    }
+    
+    public void alterar(Filme f) throws SQLException{
+        conectar();
+        if(conexao!=null){
+            Statement comando = conexao.createStatement();
+            
+            String sql = "UPDATE filme SET " +
+                         "nome = '" + f.getNome() + "', " +
+                         "genero = '" + f.getGenero() + "', " +
+                         "ano = " + f.getAno() + ", " +
+                         "duracao = " + f.getDuracao() + ", " +
+                         "descricao = '" + f.getDescricao() + "' " + 
+                         "where id = " + f.getId() + ";";
+            
+            comando.executeUpdate(sql);
+            
+            comando.close();
+            Conexao.fecharConexao();
+            
+        } else {
+            JOptionPane.showMessageDialog(null, "Erro com a conexao ao Banco de Dados.");
+        }
     }
 }
