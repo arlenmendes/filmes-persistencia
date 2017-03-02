@@ -43,13 +43,13 @@ public class FilmeDAO {
         }
     }
     
-    public List<Filme> buscarTodos() throws SQLException {
+    public List<Filme> buscarTodos(int id) throws SQLException {
         conectar();
         List<Filme> filmes = new ArrayList<>();
         if(conexao != null){
             Statement comando = conexao.createStatement();
             
-            String sql = "SELECT * FROM filme;";
+            String sql = "SELECT * FROM filme where usuario_id = "+ id +";";
             
             ResultSet resultado = comando.executeQuery(sql);
             

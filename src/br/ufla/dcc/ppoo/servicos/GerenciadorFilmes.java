@@ -7,6 +7,7 @@ package br.ufla.dcc.ppoo.servicos;
 
 import br.ufla.dcc.ppoo.dao.FilmeDAO;
 import br.ufla.dcc.ppoo.modelo.Filme;
+import br.ufla.dcc.ppoo.seguranca.SessaoUsuario;
 import java.sql.SQLException;
 import java.util.List;
 
@@ -30,7 +31,7 @@ public class GerenciadorFilmes {
     }
     
     public List<Filme> buscarTodosFilmes() throws SQLException{
-        return repositorioFilme.buscarTodos();
+        return repositorioFilme.buscarTodos(SessaoUsuario.obterInstancia().obterUsuario().obterId());
     }
     
     public Filme buscarFilmePorId(int id) throws SQLException {
