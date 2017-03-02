@@ -108,4 +108,20 @@ public class FilmeDAO {
             JOptionPane.showMessageDialog(null, "Erro com a conexao ao Banco de Dados.");
         }
     }
+    
+    public Filme buscarUltimoCadastrado() throws SQLException{
+        conectar();
+        Filme f = null;
+        if(conexao!=null){
+            Statement comando = conexao.createStatement();
+            String sql = "SELECT * FROM filme  ORDER BY id DESC LIMIT 1";
+            
+            ResultSet res = comando.executeQuery(sql);
+            
+            res.next();
+            f = new Filme(res.getInt("id"), res.getString("nome"), res.getString("genero"), res.getInt("ano"), res.getInt("duracao"), res.getString("descricao"));
+        }
+        
+        return f;
+    }
 }

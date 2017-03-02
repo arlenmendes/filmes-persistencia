@@ -2,6 +2,8 @@ package br.ufla.dcc.ppoo.gui;
 
 import br.ufla.dcc.ppoo.i18n.I18N;
 import br.ufla.dcc.ppoo.imagens.GerenciadorDeImagens;
+import br.ufla.dcc.ppoo.modelo.Filme;
+import br.ufla.dcc.ppoo.servicos.GerenciadorFilmes;
 import br.ufla.dcc.ppoo.util.Utilidades;
 import java.awt.Component;
 import java.awt.Dimension;
@@ -10,10 +12,14 @@ import java.awt.GridBagLayout;
 import java.awt.Insets;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.sql.SQLException;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 import javax.swing.JButton;
 import javax.swing.JDialog;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
+import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 import javax.swing.JTable;
@@ -47,11 +53,15 @@ public class TelaMeusFilmes {
     private JLabel lbAno;
     private JLabel lbDuracao;
     private JLabel lbDescricao;
+    private JLabel lbCodigo;
     private JTextField txtNome;
     private JTextField txtGenero;
     private JTextField txtAno;
     private JTextField txtDuracao;
+    private JTextField txtCodigo;
     private JTextArea taDescricao;
+    private GerenciadorFilmes gerenciadorFilmes;
+    private FilmesTableModel model;
 
      /**
      * Constrói a tela Meus Filmes guardando a referência da tela principal.
@@ -60,13 +70,14 @@ public class TelaMeusFilmes {
      */
     public TelaMeusFilmes(TelaPrincipal telaPrincipal) {
         this.telaPrincipal = telaPrincipal;
+        this.gerenciadorFilmes = new GerenciadorFilmes();
     }
 
     /**
      * Inicializa a tela, construindo seus componentes, configurando os eventos
      * e, ao final, exibe a tela.
      */
-    public void inicializar() {
+    public void inicializar() throws SQLException {
         construirTela();
         configurarEventosTela();
         exibirTela();
@@ -75,19 +86,11 @@ public class TelaMeusFilmes {
     /**
      * Constrói a janela tratando internacionalização, componentes e layout.
      */
-    private void construirTabela() {
-        Object[] titulosColunas = {
-            I18N.obterRotuloFilmeNome(),
-            I18N.obterRotuloFilmeGenero()
-        };
-
-        // Dados "fake"
-        Object[][] dados = {
-            {"Gravidade", "Ficção Científica"},
-            {"Shrek", "Animação"}
-        };
-
-        tbFilmes = new JTable(dados, titulosColunas);
+    private void construirTabela() throws SQLException {
+        
+        model = new FilmesTableModel(gerenciadorFilmes.buscarTodosFilmes());
+        
+        tbFilmes = new JTable(model);
         tbFilmes.setPreferredScrollableViewportSize(new Dimension(500, 70));
         tbFilmes.setFillsViewportHeight(true);
     }
@@ -113,20 +116,21 @@ public class TelaMeusFilmes {
      * Trata o estado inicial da tela
      */
     private void prepararComponentesEstadoInicial() {
-        tbFilmes.clearSelection();
         tbFilmes.setEnabled(true);
-
+        
         txtNome.setText("");
         txtGenero.setText("");
         txtAno.setText("");
         txtDuracao.setText("");
         taDescricao.setText("");
-
+        txtCodigo.setText("");
+        
         txtNome.setEditable(false);
         txtGenero.setEditable(false);
         txtAno.setEditable(false);
         txtDuracao.setEditable(false);
         taDescricao.setEditable(false);
+        txtCodigo.setEditable(false);
 
         btnNovoFilme.setEnabled(true);
         btnEditarFilme.setEnabled(false);
@@ -156,7 +160,6 @@ public class TelaMeusFilmes {
      * Trata o estado da tela para cadastro de novo filme
      */
     private void prepararComponentesEstadoNovoFilme() {
-        tbFilmes.clearSelection();
         tbFilmes.setEnabled(false);
 
         txtNome.setText("");
@@ -164,6 +167,7 @@ public class TelaMeusFilmes {
         txtAno.setText("");
         txtDuracao.setText("");
         taDescricao.setText("");
+        txtCodigo.setText("");
 
         txtNome.setEditable(true);
         txtGenero.setEditable(true);
@@ -200,7 +204,7 @@ public class TelaMeusFilmes {
     /**
      * Adiciona os componentes da tela tratando layout e internacionalização
      */
-    private void adicionarComponentes() {
+    private void adicionarComponentes() throws SQLException {
         construirTabela();
         JScrollPane scrollPaneTabela = new JScrollPane(tbFilmes);
         adicionarComponente(scrollPaneTabela,
@@ -269,6 +273,18 @@ public class TelaMeusFilmes {
                 GridBagConstraints.LINE_START,
                 GridBagConstraints.HORIZONTAL,
                 4, 1, 3, 1);
+        
+        lbCodigo = new JLabel("Codigo");
+        adicionarComponente(lbCodigo,
+                GridBagConstraints.LINE_END,
+                GridBagConstraints.NONE,
+                5, 0, 1, 1);
+        
+        txtCodigo = new JTextField(8);
+        adicionarComponente(txtCodigo,
+                GridBagConstraints.LINE_START,
+                GridBagConstraints.HORIZONTAL,
+                5, 1, 3, 1);
 
         btnNovoFilme = new JButton(I18N.obterBotaoNovo(),
                 GerenciadorDeImagens.NOVO);
@@ -303,14 +319,15 @@ public class TelaMeusFilmes {
     /**
      * Trata a selação de filmes na grade.
      */
-    private void selecionouFilme() {
-        // Dados "fake"
-        String texto = String.format("Linha selecionada: %d", tbFilmes.getSelectedRow());
-        txtNome.setText(texto);
-        txtGenero.setText(texto);
-        txtAno.setText(texto);
-        txtDuracao.setText(texto);
-        taDescricao.setText(texto);
+    private void selecionouFilme() throws SQLException {
+        
+        Filme f = gerenciadorFilmes.buscarFilmePorId((int) tbFilmes.getValueAt(tbFilmes.getSelectedRow(), 0));
+        txtNome.setText(f.getNome());
+        txtGenero.setText(f.getGenero());
+        txtAno.setText(Integer.toString(f.getAno()));
+        txtDuracao.setText(Integer.toString(f.getDuracao()));
+        taDescricao.setText(f.getDescricao());
+        txtCodigo.setText(Integer.toString(f.getId()));
     }
 
     /**
@@ -327,8 +344,15 @@ public class TelaMeusFilmes {
         tbFilmes.getSelectionModel().addListSelectionListener(new ListSelectionListener() {
             @Override
             public void valueChanged(ListSelectionEvent e) {
-                prepararComponentesEstadoSelecaoFilme();
-                selecionouFilme();
+                if(tbFilmes.getSelectedRow()>=0){
+                    prepararComponentesEstadoSelecaoFilme();
+                    try {
+                        selecionouFilme();
+                    } catch (SQLException ex) {
+                        JOptionPane.showMessageDialog(null, "Erro ao recuperar o filme: \n" + ex.getMessage());
+                    }
+                }
+                
             }
         });
 
@@ -342,6 +366,11 @@ public class TelaMeusFilmes {
         btnSalvarFilme.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
+                try {
+                    salvarFilme();
+                } catch (SQLException ex) {
+                    JOptionPane.showMessageDialog(null, "Problema ao salvar filme no Banco." + ex);
+                }
                 prepararComponentesEstadoInicial();
             }
         });
@@ -366,7 +395,7 @@ public class TelaMeusFilmes {
     /**
      * Constrói a janela tratando internacionalização, componentes e layout.
      */
-    private void construirTela() {
+    private void construirTela() throws SQLException {
         janela = new JDialog();
         janela.setTitle(I18N.obterTituloTelaMeusFilmes());
         layout = new GridBagLayout();
@@ -385,5 +414,20 @@ public class TelaMeusFilmes {
         janela.setModal(true);
         janela.setVisible(true);
         janela.setResizable(false);
+    }
+    
+    private void salvarFilme() throws SQLException {
+        if(txtCodigo.getText().equals("")) {
+            Filme f = new Filme(txtNome.getText(), txtGenero.getText(), Integer.parseInt(txtAno.getText()), Integer.parseInt(txtDuracao.getText()), taDescricao.getText());
+            gerenciadorFilmes.cadastrarFilme(f);
+            model.adicionarFilme(new Filme(gerenciadorFilmes.buscaUltimoFilmeCadastrado().getId(), txtNome.getText(), txtGenero.getText(), Integer.parseInt(txtAno.getText()), Integer.parseInt(txtDuracao.getText()), taDescricao.getText()));
+        } else {
+            Filme f = new Filme(Integer.parseInt(txtCodigo.getText()), txtNome.getText(), txtGenero.getText(), Integer.parseInt(txtAno.getText()), Integer.parseInt(txtDuracao.getText()), taDescricao.getText());
+            gerenciadorFilmes.atualizarFilme(f);
+            model.atualizarFilme(f, tbFilmes.getSelectedRow());
+        }
+//        model = new FilmesTableModel(gerenciadorFilmes.buscarTodosFilmes());
+        model = null;
+        tbFilmes.getSelectionModel().clearSelection();
     }
 }

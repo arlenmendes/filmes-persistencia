@@ -33,4 +33,12 @@ public class GerenciadorFilmes {
         return repositorioFilme.buscarTodos();
     }
     
+    public Filme buscarFilmePorId(int id) throws SQLException {
+        return repositorioFilme.buscarPorId(id);
+    }
+    
+    public Filme buscaUltimoFilmeCadastrado() throws SQLException {
+        return repositorioFilme.buscarUltimoCadastrado();
+    }
+    
 }
