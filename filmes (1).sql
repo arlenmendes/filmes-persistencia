@@ -3,7 +3,7 @@
 -- http://www.phpmyadmin.net
 --
 -- Host: localhost
--- Generation Time: 01-Mar-2017 às 23:45
+-- Generation Time: 03-Mar-2017 às 00:36
 -- Versão do servidor: 10.1.19-MariaDB
 -- PHP Version: 7.0.9
 
@@ -44,7 +44,8 @@ CREATE TABLE `filme` (
   `genero` varchar(100) NOT NULL,
   `ano` int(4) NOT NULL,
   `duracao` int(11) NOT NULL,
-  `descricao` text NOT NULL
+  `descricao` text NOT NULL,
+  `usuario_id` int(11) NOT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1;
 
 -- --------------------------------------------------------
