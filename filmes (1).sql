@@ -3,7 +3,7 @@
 -- http://www.phpmyadmin.net
 --
 -- Host: localhost
--- Generation Time: 03-Mar-2017 às 00:36
+-- Generation Time: 07-Mar-2017 às 03:26
 -- Versão do servidor: 10.1.19-MariaDB
 -- PHP Version: 7.0.9
 
@@ -28,7 +28,19 @@ SET time_zone = "+00:00";
 
 CREATE TABLE `chaves` (
   `id` int(11) NOT NULL,
-  `nome` int(11) NOT NULL,
+  `nome` varchar(11) NOT NULL,
+  `lista_id` int(11) NOT NULL
+) ENGINE=InnoDB DEFAULT CHARSET=latin1;
+
+-- --------------------------------------------------------
+
+--
+-- Estrutura da tabela `curtir`
+--
+
+CREATE TABLE `curtir` (
+  `id` int(11) NOT NULL,
+  `usuario_id` int(11) NOT NULL,
   `lista_id` int(11) NOT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1;
 
@@ -56,10 +68,11 @@ CREATE TABLE `filme` (
 
 CREATE TABLE `lista` (
   `id` int(11) NOT NULL,
-  `nome` int(11) NOT NULL,
-  `autor` int(11) DEFAULT NULL,
+  `nome` varchar(11) NOT NULL,
+  `autor` varchar(11) NOT NULL,
   `curtidas` int(11) NOT NULL DEFAULT '0',
-  `publica` tinyint(1) NOT NULL DEFAULT '0'
+  `publica` tinyint(1) NOT NULL DEFAULT '0',
+  `usuario_id` int(11) NOT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1;
 
 -- --------------------------------------------------------
@@ -77,6 +90,21 @@ CREATE TABLE `lista_filme` (
 -- --------------------------------------------------------
 
 --
+-- Stand-in structure for view `lista_filme_view`
+--
+CREATE TABLE `lista_filme_view` (
+`lista_id` int(11)
+,`id` int(11)
+,`nome` varchar(100)
+,`genero` varchar(100)
+,`ano` int(4)
+,`duracao` int(11)
+,`descricao` text
+);
+
+-- --------------------------------------------------------
+
+--
 -- Estrutura da tabela `usuario`
 --
 
@@ -87,6 +115,15 @@ CREATE TABLE `usuario` (
   `senha` varchar(100) NOT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1;
 
+-- --------------------------------------------------------
+
+--
+-- Structure for view `lista_filme_view`
+--
+DROP TABLE IF EXISTS `lista_filme_view`;
+
+CREATE ALGORITHM=UNDEFINED DEFINER=`root`@`localhost` SQL SECURITY DEFINER VIEW `lista_filme_view`  AS  select `lista`.`id` AS `lista_id`,`filme`.`id` AS `id`,`filme`.`nome` AS `nome`,`filme`.`genero` AS `genero`,`filme`.`ano` AS `ano`,`filme`.`duracao` AS `duracao`,`filme`.`descricao` AS `descricao` from ((`lista` join `lista_filme` on((`lista`.`id` = `lista_filme`.`lista_id`))) join `filme` on((`filme`.`id` = `lista_filme`.`filme_id`))) ;
+
 --
 -- Indexes for dumped tables
 --
@@ -95,6 +132,12 @@ CREATE TABLE `usuario` (
 -- Indexes for table `chaves`
 --
 ALTER TABLE `chaves`
+  ADD PRIMARY KEY (`id`);
+
+--
+-- Indexes for table `curtir`
+--
+ALTER TABLE `curtir`
   ADD PRIMARY KEY (`id`);
 
 --
@@ -129,6 +172,11 @@ ALTER TABLE `usuario`
 -- AUTO_INCREMENT for table `chaves`
 --
 ALTER TABLE `chaves`
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT;
+--
+-- AUTO_INCREMENT for table `curtir`
+--
+ALTER TABLE `curtir`
   MODIFY `id` int(11) NOT NULL AUTO_INCREMENT;
 --
 -- AUTO_INCREMENT for table `filme`
