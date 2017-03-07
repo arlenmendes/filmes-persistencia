@@ -6,8 +6,10 @@
 package br.ufla.dcc.ppoo.dao;
 
 import br.ufla.dcc.ppoo.modelo.Filme;
+import br.ufla.dcc.ppoo.modelo.Lista;
 import br.ufla.dcc.ppoo.modelo.Usuario;
 import java.sql.SQLException;
+import java.util.ArrayList;
 import java.util.List;
 
 /**
@@ -20,7 +22,8 @@ public class TesteBD {
 //        UsuarioDAO dao = new UsuarioDAO();
 //        char[] senha = new char[]{'1', '2', '3'};
 //        dao.adicionar(new Usuario("valdeci", senha, "Valdeci"));
-        FilmeDAO dao = new FilmeDAO();
+        ListaDAO dao = new ListaDAO();
+        FilmeDAO dao2 = new FilmeDAO();
 //        dao.adicionar(new Filme("Vingadores", "Açao/Ficçao", 2010, 115, "Filme da Marvel"));
 //        List<Filme> filmes = dao.buscarTodos();
 //        for(Filme f : filmes){
@@ -29,6 +32,12 @@ public class TesteBD {
         
 //        Filme f = dao.buscarPorId(1);
 //        System.out.println(f.getId() + " - " + f.getNome() + "\n\t" + f.getDescricao());
-        dao.alterar(new Filme(2,"Vingadores", "Açao/Ficçao", 2010, 115, "Filme da Marvel"));
+        List<String> chaves = new ArrayList();
+        chaves.add("arlen");
+        chaves.add("terror");
+//        dao.adicionar(new Lista("TesteBD", chaves, dao2.buscarTodos(2)));
+        Lista lista = dao.buscaPorId(1);
+        
+        System.out.println(lista.getAutor());
     }
 }

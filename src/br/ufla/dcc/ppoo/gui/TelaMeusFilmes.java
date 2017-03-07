@@ -424,10 +424,11 @@ public class TelaMeusFilmes {
         } else {
             Filme f = new Filme(Integer.parseInt(txtCodigo.getText()), txtNome.getText(), txtGenero.getText(), Integer.parseInt(txtAno.getText()), Integer.parseInt(txtDuracao.getText()), taDescricao.getText());
             gerenciadorFilmes.atualizarFilme(f);
+            System.out.println(model);
             model.atualizarFilme(f, tbFilmes.getSelectedRow());
         }
 //        model = new FilmesTableModel(gerenciadorFilmes.buscarTodosFilmes());
-        model = null;
+//        model = null;
         tbFilmes.getSelectionModel().clearSelection();
     }
 }

@@ -15,20 +15,31 @@ import java.util.List;
  */
 public class Lista {
     
+    private int id;
     private String nome;
     private List<String> chaves;
     private List<Filme> filmes;
     private String autor;
     private boolean publica = false;
-    private int dono_id;
+    private int usuario_id;
     
     
     //esta funcao deve ser chamada apenas ao criar uma nova lista.
-    public Lista(String n, List<String> c, List<Filme> filmes){
+    public Lista(String nome, List<String> chaves, List<Filme> filmes){
+        this.nome = nome;
+//        this.autor = SessaoUsuario.obterInstancia().obterUsuario().obterNome();
+        this.chaves = chaves;
+//        this.usuario_id = SessaoUsuario.obterInstancia().obterUsuario().obterId();
+        this.filmes = filmes;
+    }
+    
+    //esta funcao deve ser chamada para manipular das demais formas
+    public Lista(int id, String n, List<String> c, List<Filme> filmes, int usuario_id, String autor){
+        this.id = id;
         this.nome = n;
-        this.autor = SessaoUsuario.obterInstancia().obterUsuario().obterNome();
+        this.autor = autor;
         this.chaves = c;
-        this.dono_id = SessaoUsuario.obterInstancia().obterUsuario().obterId();
+        this.usuario_id = usuario_id;
         this.filmes = filmes;
     }
 
@@ -100,6 +111,34 @@ public class Lista {
      */
     public void setPublica(boolean publica) {
         this.publica = publica;
+    }
+
+    /**
+     * @return the id
+     */
+    public int getId() {
+        return id;
+    }
+
+    /**
+     * @param id the id to set
+     */
+    public void setId(int id) {
+        this.id = id;
+    }
+
+    /**
+     * @return the usuario_id
+     */
+    public int getUsuario_id() {
+        return usuario_id;
+    }
+
+    /**
+     * @param usuario_id the usuario_id to set
+     */
+    public void setUsuario_id(int usuario_id) {
+        this.usuario_id = usuario_id;
     }
     
     

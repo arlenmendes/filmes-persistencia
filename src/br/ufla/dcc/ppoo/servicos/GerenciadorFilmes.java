@@ -23,6 +23,7 @@ public class GerenciadorFilmes {
     }
     
     public void cadastrarFilme(Filme f) throws SQLException{
+        f.setUsuario_id(SessaoUsuario.obterInstancia().obterUsuario().obterId());
         repositorioFilme.adicionar(f);
     }
     

@@ -21,6 +21,7 @@ public class Filme {
     private int ano;
     private int duracao;
     private String descricao;
+    private int usuario_id;
 
     /**
      * Contrutor da classe filme
@@ -130,6 +131,20 @@ public class Filme {
      */
     public void setId(int id) {
         this.id = id;
+    }
+
+    /**
+     * @return the usuario_id
+     */
+    public int getUsuario_id() {
+        return usuario_id;
+    }
+
+    /**
+     * @param usuario_id the usuario_id to set
+     */
+    public void setUsuario_id(int usuario_id) {
+        this.usuario_id = usuario_id;
     }
 
 }

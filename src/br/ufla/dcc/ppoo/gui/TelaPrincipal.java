@@ -52,7 +52,7 @@ public class TelaPrincipal {
     // Itens de menu específicos para usuários logados no sistema    
     private JMenuItem menuLogout;
     private JMenuItem menuMeusFilmes;
-
+    private JMenuItem menuMinhasListas;
     /**
      * Construtor; incializa as demais telas e sessão de usuário.
      */
@@ -131,6 +131,20 @@ public class TelaPrincipal {
                 }
             }
         });
+        
+        menuMinhasListas.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                TelaMinhasListasFilmes telaMLF;
+                try {
+                    telaMLF = new TelaMinhasListasFilmes(janela, true);
+                    telaMLF.setVisible(true);
+                } catch (SQLException ex) {
+                    Logger.getLogger(TelaPrincipal.class.getName()).log(Level.SEVERE, null, ex);
+                }
+                
+            }
+        });
 
         menuCadastrarUsuario.addActionListener(new ActionListener() {
             @Override
@@ -166,13 +180,13 @@ public class TelaPrincipal {
         menuCadastrarUsuario = new JMenuItem(I18N.obterMenuCadastrarUsuario(), GerenciadorDeImagens.CADASTRAR_USUARIO);
         menuLogout = new JMenuItem(I18N.obterMenuLogout(), GerenciadorDeImagens.LOGOUT);
         menuMeusFilmes = new JMenuItem(I18N.obterMenuMeusFilmes(), GerenciadorDeImagens.MEUS_FILMES);
-
+        menuMinhasListas = new JMenuItem("Minhas Listas", null);
         if (!sessaoUsuario.estahLogado()) {
             menuInicio.add(menuEntrar);
             menuInicio.add(menuCadastrarUsuario);
         } else {            
             // Aqui você poderá adicionar outros itens de menu, se necessário.
-            
+            menuInicio.add(menuMinhasListas);
             menuInicio.add(menuMeusFilmes);
             menuInicio.add(menuLogout);
         }

@@ -51,7 +51,9 @@ public class FilmesTableModel extends AbstractTableModel {
     }
     
     public void atualizarListaFilmes(List<Filme> filmes) {
+//        limpar();
         this.filmes = filmes;
+        fireTableDataChanged();
     }
     
     @Override

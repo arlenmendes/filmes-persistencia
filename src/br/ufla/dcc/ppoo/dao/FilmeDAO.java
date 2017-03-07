@@ -30,8 +30,8 @@ public class FilmeDAO {
         if(conexao != null) {
             Statement comando = conexao.createStatement();
             
-            String sql = "INSERT INTO filme(nome, genero, ano, duracao, descricao)"
-                       + "VALUES('" + f.getNome() + "','" + f.getGenero() + "', " + f.getAno() +", " + f.getDuracao() + ", '" + f.getDescricao() + "')";
+            String sql = "INSERT INTO filme(nome, genero, ano, duracao, descricao, usuario_id)"
+                       + "VALUES('" + f.getNome() + "','" + f.getGenero() + "', " + f.getAno() +", " + f.getDuracao() + ", '" + f.getDescricao() + "', " + f.getUsuario_id() + ")";
             
             comando.executeUpdate(sql);
             
