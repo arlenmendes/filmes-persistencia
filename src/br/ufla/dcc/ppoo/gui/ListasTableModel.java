@@ -6,6 +6,7 @@
 package br.ufla.dcc.ppoo.gui;
 
 import br.ufla.dcc.ppoo.modelo.Lista;
+import br.ufla.dcc.ppoo.modelo.Palavra;
 import java.util.ArrayList;
 import java.util.List;
 import javax.swing.table.AbstractTableModel;
@@ -17,7 +18,7 @@ import javax.swing.table.AbstractTableModel;
 public class ListasTableModel extends AbstractTableModel {
     
     private List<Lista> listas;
-    private String[] colunas = {"Codigo", "Nome","Palavras-Chave"};
+    private String[] colunas = {"Codigo", "Nome","Palavras-Chave", "Autor"};
     
     public ListasTableModel(List<Lista> listas) {
         this.listas = listas;
@@ -27,7 +28,7 @@ public class ListasTableModel extends AbstractTableModel {
         this.listas = new ArrayList<>();
     }
     
-    public void  adicionarFilme(Lista l) {
+    public void  adicionarLista(Lista l) {
         this.listas.add(l);
         this.fireTableDataChanged();
     }
@@ -43,6 +44,16 @@ public class ListasTableModel extends AbstractTableModel {
     
     public void atualizarListaFilmes(List<Lista> listas) {
         this.listas = listas;
+        this.fireTableDataChanged();
+    }
+    
+    public void atualizarVisibilidade(int linha, int valor) {
+        this.listas.get(linha).setPublica(valor);
+        this.fireTableDataChanged();
+    }
+    
+    public void atualizarTabela() {
+        this.fireTableDataChanged();
     }
     
     public void atualizarLista(Lista l, int linha) {
@@ -71,10 +82,13 @@ public class ListasTableModel extends AbstractTableModel {
                 case 1: return listas.get(linha).getNome();
                 case 2: 
                     String chaves = "";
-                    for(String chave: this.listas.get(linha).getChaves()){
-                        chaves = chaves + chave + ", ";
+                    for(Palavra palavra: this.listas.get(linha).getChaves()){
+                        chaves = chaves + palavra.getNome() + ", ";
+                        
                     }
                     return chaves;
+                    
+                case 3: return listas.get(linha).getAutor();
                 default: System.out.println("Parametro de coluna invalido.");
             }
         }

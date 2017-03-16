@@ -45,6 +45,15 @@ public class FilmesTableModel extends AbstractTableModel {
         return this.filmes.get(linha);
     }
     
+    public List<Filme> buscarFilmes() {
+        return this.filmes;
+    }
+    
+    public void removerFilme(int linha){
+        this.filmes.remove(linha);
+        this.fireTableDataChanged();
+    }
+    
     public void limpar() {
         this.filmes.clear();
         fireTableDataChanged();

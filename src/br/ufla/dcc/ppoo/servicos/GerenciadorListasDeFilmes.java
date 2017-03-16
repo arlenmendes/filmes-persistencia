@@ -7,8 +7,10 @@ package br.ufla.dcc.ppoo.servicos;
 
 import br.ufla.dcc.ppoo.dao.ListaDAO;
 import br.ufla.dcc.ppoo.modelo.Lista;
+import br.ufla.dcc.ppoo.modelo.Palavra;
 import br.ufla.dcc.ppoo.seguranca.SessaoUsuario;
 import java.sql.SQLException;
+import java.util.ArrayList;
 import java.util.List;
 
 /**
@@ -23,10 +25,13 @@ public class GerenciadorListasDeFilmes {
     }
     
     public void cadastrarLista(Lista l) throws SQLException{
+        l.setAutor(SessaoUsuario.obterInstancia().obterUsuario().obterNome());
+        l.setUsuario_id(SessaoUsuario.obterInstancia().obterUsuario().obterId());
+        l.setPublica(1);
         repositorioListas.adicionar(l);
     }
     
-    public List<Lista> buscarListasUsuario() throws SQLException {
+    public List<Lista> buscarListasUsuarioLogado() throws SQLException {
         
         List<Lista> listas = repositorioListas.buscaPorUsuario(SessaoUsuario.obterInstancia().obterUsuario().obterId());
         return listas;
@@ -35,10 +40,48 @@ public class GerenciadorListasDeFilmes {
     //Este metodo atualiza apenas as INFORMAÇOES da Lista. Nao inclui a lista de Filmes
     public void atualizarDadosLista(Lista l) throws SQLException {
         repositorioListas.atualizar(l);
+        repositorioListas.atualizarFilmes(l);
+        repositorioListas.atualizarPalavras(l);
     }
     
     //Este metodo atualiza apenas os FILMES da Lista. Nao inclui as iformacoes da lista
     public void atualizarFilmesDaLista(Lista l) throws SQLException {
         repositorioListas.atualizarFilmes(l);
+    }
+    
+    public void alterarVisibilidade(int id, int valor) throws SQLException{
+        repositorioListas.alterarVisibilidade(id, valor);
+    }
+    
+    public List<Lista> buscarListasPublicas(String filtro) throws SQLException {
+        
+        if(!filtro.equals("")){
+            List<Lista> listas = repositorioListas.bucarPublicas();
+            
+            List<Lista> listasFiltradas = new ArrayList<>();
+            
+            for(Lista lista : listas){
+                boolean aceito = true;
+                if(lista.getNome().equals(filtro)){
+                    listasFiltradas.add(lista);
+                    aceito = false;
+                }
+                if(aceito){
+                    for(Palavra palavra : lista.getChaves()){
+                        if(palavra.getNome().equals(filtro)){
+                            listasFiltradas.add(lista);
+                            break;
+                        }
+                    }
+                }
+                
+            }
+            
+            return listasFiltradas;
+        } else {
+            List<Lista> listas = repositorioListas.bucarPublicas();
+            return listas;
+        }
+        
     }
 }

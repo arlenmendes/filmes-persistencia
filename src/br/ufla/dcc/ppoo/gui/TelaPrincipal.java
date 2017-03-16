@@ -2,19 +2,23 @@ package br.ufla.dcc.ppoo.gui;
 
 import br.ufla.dcc.ppoo.i18n.I18N;
 import br.ufla.dcc.ppoo.imagens.GerenciadorDeImagens;
+import br.ufla.dcc.ppoo.modelo.Lista;
 import br.ufla.dcc.ppoo.seguranca.SessaoUsuario;
+import br.ufla.dcc.ppoo.servicos.GerenciadorListasDeFilmes;
 import br.ufla.dcc.ppoo.util.Utilidades;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
 import java.sql.SQLException;
+import java.util.List;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import javax.swing.JFrame;
 import javax.swing.JMenu;
 import javax.swing.JMenuBar;
 import javax.swing.JMenuItem;
+import javax.swing.JOptionPane;
 import javax.swing.JRootPane;
 
 /**
@@ -48,6 +52,7 @@ public class TelaPrincipal {
     private JMenuItem menuIdiomaIngles;
     private JMenuItem menuSair;
     private JMenuItem menuSobre;
+    private JMenuItem menuListasPublicas;
 
     // Itens de menu específicos para usuários logados no sistema    
     private JMenuItem menuLogout;
@@ -159,6 +164,34 @@ public class TelaPrincipal {
                 Utilidades.msgInformacao(I18N.obterMensagemSobre());
             }
         });
+        
+        menuListasPublicas.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                
+                String filtro = "";
+                
+                filtro = JOptionPane.showInputDialog(menuLogout, "Pesquisar Lista:");
+                
+                GerenciadorListasDeFilmes gerenciador = new GerenciadorListasDeFilmes();
+                
+                try {
+                    List<Lista> listas = gerenciador.buscarListasPublicas(filtro);
+                    TelaListasPublicas telaLP;
+                    if(listas.size() > 0){
+                        telaLP = new TelaListasPublicas(null, true, listas);
+                        telaLP.setVisible(true);
+                    } else {
+                        JOptionPane.showMessageDialog(null, "Sua busca nao retornou nenhum resultado.");
+                    }
+                    
+                } catch (SQLException ex) {
+                    Logger.getLogger(TelaPrincipal.class.getName()).log(Level.SEVERE, null, ex);
+                }
+                
+                
+            }
+        });
 
         janela.addWindowListener(new WindowAdapter() {
             @Override
@@ -181,14 +214,17 @@ public class TelaPrincipal {
         menuLogout = new JMenuItem(I18N.obterMenuLogout(), GerenciadorDeImagens.LOGOUT);
         menuMeusFilmes = new JMenuItem(I18N.obterMenuMeusFilmes(), GerenciadorDeImagens.MEUS_FILMES);
         menuMinhasListas = new JMenuItem("Minhas Listas", null);
+        menuListasPublicas = new JMenuItem("Listas Publicas");
         if (!sessaoUsuario.estahLogado()) {
             menuInicio.add(menuEntrar);
             menuInicio.add(menuCadastrarUsuario);
+            menuInicio.add(menuListasPublicas);
         } else {            
             // Aqui você poderá adicionar outros itens de menu, se necessário.
             menuInicio.add(menuMinhasListas);
             menuInicio.add(menuMeusFilmes);
             menuInicio.add(menuLogout);
+            menuInicio.add(menuListasPublicas);
         }
 
         menuSair = new JMenuItem(I18N.obterMenuSair(), GerenciadorDeImagens.SAIR);

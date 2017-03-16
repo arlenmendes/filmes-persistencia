@@ -5,11 +5,13 @@
  */
 package br.ufla.dcc.ppoo.gui;
 
+import br.ufla.dcc.ppoo.modelo.Lista;
 import br.ufla.dcc.ppoo.servicos.GerenciadorFilmes;
 import br.ufla.dcc.ppoo.servicos.GerenciadorListasDeFilmes;
 import java.sql.SQLException;
 import java.util.logging.Level;
 import java.util.logging.Logger;
+import javax.swing.JOptionPane;
 import javax.swing.table.DefaultTableModel;
 
 /**
@@ -36,7 +38,7 @@ public class TelaMinhasListasFilmes extends javax.swing.JDialog {
     }
     
     private void construirTabelas() throws SQLException {
-        modelListas = new ListasTableModel(gerenciadorListasDeFilmes.buscarListasUsuario());
+        modelListas = new ListasTableModel(gerenciadorListasDeFilmes.buscarListasUsuarioLogado());
         modelFilmesDaLista = new FilmesTableModel();
     }
 
@@ -54,10 +56,13 @@ public class TelaMinhasListasFilmes extends javax.swing.JDialog {
         btnNovaLista = new javax.swing.JButton();
         btnEditarLista = new javax.swing.JButton();
         btnDeletarLista = new javax.swing.JButton();
-        btnFechar = new javax.swing.JButton();
+        btnDetalhes = new javax.swing.JButton();
         jScrollPane3 = new javax.swing.JScrollPane();
         tbFilmesDaLista = new javax.swing.JTable();
         lbTabelaFilmes = new javax.swing.JLabel();
+        txtVisibilidade = new javax.swing.JTextField();
+        lbVisibilidade = new javax.swing.JLabel();
+        btnAlterarVisibilidade = new javax.swing.JButton();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.DISPOSE_ON_CLOSE);
         setTitle("Gerenciar Listas");
@@ -71,15 +76,25 @@ public class TelaMinhasListasFilmes extends javax.swing.JDialog {
         jScrollPane1.setViewportView(tbListas);
 
         btnNovaLista.setText("Nova");
+        btnNovaLista.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                btnNovaListaActionPerformed(evt);
+            }
+        });
 
         btnEditarLista.setText("Editar");
+        btnEditarLista.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                btnEditarListaActionPerformed(evt);
+            }
+        });
 
         btnDeletarLista.setText("Deletar");
 
-        btnFechar.setText("Fechar");
-        btnFechar.addActionListener(new java.awt.event.ActionListener() {
+        btnDetalhes.setText("Detalhes");
+        btnDetalhes.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
-                btnFecharActionPerformed(evt);
+                btnDetalhesActionPerformed(evt);
             }
         });
 
@@ -89,34 +104,58 @@ public class TelaMinhasListasFilmes extends javax.swing.JDialog {
         lbTabelaFilmes.setFont(new java.awt.Font("Open Sans", 1, 18)); // NOI18N
         lbTabelaFilmes.setText("Filmes");
 
+        lbVisibilidade.setText("Visibilidade:");
+
+        btnAlterarVisibilidade.setText("Alterar");
+        btnAlterarVisibilidade.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                btnAlterarVisibilidadeActionPerformed(evt);
+            }
+        });
+
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(getContentPane());
         getContentPane().setLayout(layout);
         layout.setHorizontalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(layout.createSequentialGroup()
                 .addContainerGap()
-                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING, false)
-                    .addComponent(jScrollPane1)
-                    .addComponent(jScrollPane3, javax.swing.GroupLayout.Alignment.LEADING)
+                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                     .addGroup(layout.createSequentialGroup()
-                        .addComponent(btnNovaLista, javax.swing.GroupLayout.PREFERRED_SIZE, 145, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                            .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING, false)
+                                .addComponent(jScrollPane1)
+                                .addComponent(jScrollPane3, javax.swing.GroupLayout.Alignment.LEADING)
+                                .addGroup(layout.createSequentialGroup()
+                                    .addComponent(btnNovaLista, javax.swing.GroupLayout.PREFERRED_SIZE, 145, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                    .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                                    .addComponent(btnEditarLista, javax.swing.GroupLayout.PREFERRED_SIZE, 145, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                    .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                                    .addComponent(btnDeletarLista, javax.swing.GroupLayout.PREFERRED_SIZE, 145, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                    .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                                    .addComponent(btnDetalhes, javax.swing.GroupLayout.PREFERRED_SIZE, 145, javax.swing.GroupLayout.PREFERRED_SIZE)))
+                            .addGroup(layout.createSequentialGroup()
+                                .addGap(263, 263, 263)
+                                .addComponent(lbTabelaFilmes)))
+                        .addGap(0, 0, Short.MAX_VALUE))
+                    .addGroup(layout.createSequentialGroup()
+                        .addGap(0, 0, Short.MAX_VALUE)
+                        .addComponent(lbVisibilidade)
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                        .addComponent(btnEditarLista, javax.swing.GroupLayout.PREFERRED_SIZE, 145, javax.swing.GroupLayout.PREFERRED_SIZE)
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                        .addComponent(btnDeletarLista, javax.swing.GroupLayout.PREFERRED_SIZE, 145, javax.swing.GroupLayout.PREFERRED_SIZE)
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                        .addComponent(btnFechar, javax.swing.GroupLayout.PREFERRED_SIZE, 145, javax.swing.GroupLayout.PREFERRED_SIZE)))
-                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
-            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, layout.createSequentialGroup()
-                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                .addComponent(lbTabelaFilmes)
-                .addGap(280, 280, 280))
+                        .addComponent(txtVisibilidade, javax.swing.GroupLayout.PREFERRED_SIZE, 238, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addGap(18, 18, 18)
+                        .addComponent(btnAlterarVisibilidade, javax.swing.GroupLayout.PREFERRED_SIZE, 90, javax.swing.GroupLayout.PREFERRED_SIZE)))
+                .addContainerGap())
         );
         layout.setVerticalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(layout.createSequentialGroup()
-                .addComponent(jScrollPane1, javax.swing.GroupLayout.PREFERRED_SIZE, 275, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 12, Short.MAX_VALUE)
+                .addComponent(jScrollPane1, javax.swing.GroupLayout.PREFERRED_SIZE, 182, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                    .addComponent(txtVisibilidade, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(lbVisibilidade)
+                    .addComponent(btnAlterarVisibilidade))
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 23, Short.MAX_VALUE)
                 .addComponent(lbTabelaFilmes)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
@@ -126,15 +165,21 @@ public class TelaMinhasListasFilmes extends javax.swing.JDialog {
                             .addComponent(btnNovaLista)
                             .addComponent(btnEditarLista)
                             .addComponent(btnDeletarLista)
-                            .addComponent(btnFechar)))
+                            .addComponent(btnDetalhes)))
                     .addComponent(jScrollPane3, javax.swing.GroupLayout.PREFERRED_SIZE, 258, javax.swing.GroupLayout.PREFERRED_SIZE))
                 .addContainerGap())
         );
 
         pack();
+        setLocationRelativeTo(null);
     }// </editor-fold>//GEN-END:initComponents
 
     private void tbListasMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_tbListasMouseClicked
+        if(modelListas.buscarLista(tbListas.getSelectedRow()).isPublica() == 1) {
+            txtVisibilidade.setText("Privada");
+        } else {
+            txtVisibilidade.setText("Publica");
+        }
         try {
             preencheTabelaFilmes();
             preparaComponenteSelecionaLista();
@@ -143,9 +188,65 @@ public class TelaMinhasListasFilmes extends javax.swing.JDialog {
         }
     }//GEN-LAST:event_tbListasMouseClicked
 
-    private void btnFecharActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnFecharActionPerformed
-        this.dispose();
-    }//GEN-LAST:event_btnFecharActionPerformed
+    private void btnDetalhesActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnDetalhesActionPerformed
+        
+    }//GEN-LAST:event_btnDetalhesActionPerformed
+        
+    private void btnEditarListaActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnEditarListaActionPerformed
+        TelaGerenciaLista telaGL;
+        try {
+            telaGL = new TelaGerenciaLista(null, true, modelListas.buscarLista(tbListas.getSelectedRow()));
+            telaGL.setVisible(true);
+            if(telaGL.getLista() != null){
+                gerenciadorListasDeFilmes.atualizarDadosLista(telaGL.getLista());
+                modelListas.atualizarListaFilmes(gerenciadorListasDeFilmes.buscarListasUsuarioLogado());
+                modelListas.atualizarTabela();
+                modelFilmesDaLista.limpar();
+            }
+        } catch (SQLException ex) {
+            Logger.getLogger(TelaMinhasListasFilmes.class.getName()).log(Level.SEVERE, null, ex);
+        }
+        
+    }//GEN-LAST:event_btnEditarListaActionPerformed
+
+    private void btnNovaListaActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnNovaListaActionPerformed
+        TelaGerenciaLista telaGL;
+        try {
+            telaGL = new TelaGerenciaLista(null, true, null);
+            telaGL.setVisible(true);
+            if(telaGL.getLista() != null){
+                gerenciadorListasDeFilmes.cadastrarLista(telaGL.getLista());
+                modelListas.atualizarListaFilmes(gerenciadorListasDeFilmes.buscarListasUsuarioLogado());
+            }
+        } catch (SQLException ex) {
+            Logger.getLogger(TelaMinhasListasFilmes.class.getName()).log(Level.SEVERE, null, ex);
+        }
+        
+    }//GEN-LAST:event_btnNovaListaActionPerformed
+
+    private void btnAlterarVisibilidadeActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnAlterarVisibilidadeActionPerformed
+        Lista l = modelListas.buscarLista(tbListas.getSelectedRow());
+        int resposta = JOptionPane.showConfirmDialog(null, "Deseja realmente alterar a visibilidade da lista " + l.getNome() + "?", "Visibilidade", JOptionPane.YES_NO_OPTION);
+        if(resposta == JOptionPane.YES_OPTION) {
+            if(l.isPublica() == 1) {
+                try {
+                    gerenciadorListasDeFilmes.alterarVisibilidade(l.getId(), 0);
+                    modelListas.atualizarVisibilidade(tbListas.getSelectedRow(), 0);
+                    preparaComponenteInicial();
+                } catch (SQLException ex) {
+                    Logger.getLogger(TelaMinhasListasFilmes.class.getName()).log(Level.SEVERE, null, ex);
+                }
+            } else {
+                try {
+                    gerenciadorListasDeFilmes.alterarVisibilidade(l.getId(), 1);
+                    modelListas.atualizarVisibilidade(tbListas.getSelectedRow(), 1);
+                    preparaComponenteInicial();
+                } catch (SQLException ex) {
+                    Logger.getLogger(TelaMinhasListasFilmes.class.getName()).log(Level.SEVERE, null, ex);
+                }
+            }
+        }
+    }//GEN-LAST:event_btnAlterarVisibilidadeActionPerformed
 
     /**
      * @param args the command line arguments
@@ -196,31 +297,42 @@ public class TelaMinhasListasFilmes extends javax.swing.JDialog {
     }
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
+    private javax.swing.JButton btnAlterarVisibilidade;
     private javax.swing.JButton btnDeletarLista;
+    private javax.swing.JButton btnDetalhes;
     private javax.swing.JButton btnEditarLista;
-    private javax.swing.JButton btnFechar;
     private javax.swing.JButton btnNovaLista;
     private javax.swing.JScrollPane jScrollPane1;
     private javax.swing.JScrollPane jScrollPane3;
     private javax.swing.JLabel lbTabelaFilmes;
+    private javax.swing.JLabel lbVisibilidade;
     private javax.swing.JTable tbFilmesDaLista;
     private javax.swing.JTable tbListas;
+    private javax.swing.JTextField txtVisibilidade;
     // End of variables declaration//GEN-END:variables
     private void preencheTabelaFilmes() throws SQLException {
-        modelFilmesDaLista.atualizarListaFilmes(gerenciadorListasDeFilmes.buscarListasUsuario().get(tbListas.getSelectedRow()).getFilmes());
+        modelFilmesDaLista.atualizarListaFilmes(gerenciadorListasDeFilmes.buscarListasUsuarioLogado().get(tbListas.getSelectedRow()).getFilmes());
     }
     
     private void preparaComponenteInicial(){
         btnDeletarLista.setEnabled(false);
         btnNovaLista.setEnabled(true);
-        btnFechar.setEnabled(true);
+        btnDetalhes.setEnabled(true);
         btnEditarLista.setEnabled(false);
+        btnDetalhes.setEnabled(false);
+        btnAlterarVisibilidade.setEnabled(false);
+        
+        txtVisibilidade.setEditable(false);
+        txtVisibilidade.setText("");
+        modelFilmesDaLista.limpar();
     }
     
     private void preparaComponenteSelecionaLista(){
         btnDeletarLista.setEnabled(true);
         btnNovaLista.setEnabled(true);
-        btnFechar.setEnabled(true);
+        btnDetalhes.setEnabled(true);
         btnEditarLista.setEnabled(true);
+        btnDetalhes.setEnabled(true);
+        btnAlterarVisibilidade.setEnabled(true);
     }
 }

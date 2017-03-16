@@ -17,15 +17,15 @@ public class Lista {
     
     private int id;
     private String nome;
-    private List<String> chaves;
+    private List<Palavra> chaves;
     private List<Filme> filmes;
     private String autor;
-    private boolean publica = false;
+    private int publica;
     private int usuario_id;
     
     
     //esta funcao deve ser chamada apenas ao criar uma nova lista.
-    public Lista(String nome, List<String> chaves, List<Filme> filmes){
+    public Lista(String nome, List<Palavra> chaves, List<Filme> filmes){
         this.nome = nome;
 //        this.autor = SessaoUsuario.obterInstancia().obterUsuario().obterNome();
         this.chaves = chaves;
@@ -34,13 +34,14 @@ public class Lista {
     }
     
     //esta funcao deve ser chamada para manipular das demais formas
-    public Lista(int id, String n, List<String> c, List<Filme> filmes, int usuario_id, String autor){
+    public Lista(int id, String n, List<Palavra> c, List<Filme> filmes, int usuario_id, String autor, int p){
         this.id = id;
         this.nome = n;
         this.autor = autor;
         this.chaves = c;
         this.usuario_id = usuario_id;
         this.filmes = filmes;
+        this.publica = p;
     }
 
     /**
@@ -60,14 +61,14 @@ public class Lista {
     /**
      * @return the chaves
      */
-    public List<String> getChaves() {
+    public List<Palavra> getChaves() {
         return chaves;
     }
 
     /**
      * @param chaves the chaves to set
      */
-    public void setChaves(List<String> chaves) {
+    public void setChaves(List<Palavra> chaves) {
         this.chaves = chaves;
     }
 
@@ -102,14 +103,14 @@ public class Lista {
     /**
      * @return the publica
      */
-    public boolean isPublica() {
+    public int isPublica() {
         return publica;
     }
 
     /**
      * @param publica the publica to set
      */
-    public void setPublica(boolean publica) {
+    public void setPublica(int publica) {
         this.publica = publica;
     }
 
