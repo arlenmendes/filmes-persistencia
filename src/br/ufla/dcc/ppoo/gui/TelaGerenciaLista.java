@@ -42,19 +42,20 @@ public class TelaGerenciaLista extends javax.swing.JDialog {
         gerenciadorListasDeFilmes = new GerenciadorListasDeFilmes();
         gerenciadorFilmes = new GerenciadorFilmes();
         
-        
+        //lista que vai ser retornada para a TelaMihasListas
         lista = null;
         
+        modelChaves = new PalavrasTableModel();
+        
         if(l != null){
-            modelChaves = new PalavrasTableModel();
+            
             for(Palavra palavra : l.getChaves()) {
                 modelChaves.adicionarPalavra(palavra);
             }
             modelFilmesSelecionados = new FilmesTableModel(l.getFilmes());
             modelFilmes = new FilmesTableModel(verificaFilmes(l.getFilmes()));
         } else {
-            modelFilmes = new FilmesTableModel();
-            modelChaves = new PalavrasTableModel();
+            modelFilmes = new FilmesTableModel(gerenciadorFilmes.buscarTodosFilmes());
             modelFilmesSelecionados = new FilmesTableModel();
         }
         
@@ -64,7 +65,6 @@ public class TelaGerenciaLista extends javax.swing.JDialog {
             preparaComponentesNovaLista();
         } else {
             preparaComponentesEdiarLista(l);
-            modelChaves = new PalavrasTableModel(l.getChaves());
         }
         
         filmes = new ArrayList<>();
@@ -79,6 +79,7 @@ public class TelaGerenciaLista extends javax.swing.JDialog {
     // <editor-fold defaultstate="collapsed" desc="Generated Code">//GEN-BEGIN:initComponents
     private void initComponents() {
 
+        jDesktopPane1 = new javax.swing.JDesktopPane();
         lbNome = new javax.swing.JLabel();
         txtNome = new javax.swing.JTextField();
         spListaPalavras = new javax.swing.JScrollPane();
@@ -281,6 +282,7 @@ public class TelaGerenciaLista extends javax.swing.JDialog {
         );
 
         pack();
+        setLocationRelativeTo(null);
     }// </editor-fold>//GEN-END:initComponents
 
     private void btnFinalizarActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnFinalizarActionPerformed
@@ -375,6 +377,7 @@ public class TelaGerenciaLista extends javax.swing.JDialog {
     private javax.swing.JButton btnFinalizar;
     private javax.swing.JButton btnRemoverFilme;
     private javax.swing.JButton btnRemoverPalavraChave;
+    private javax.swing.JDesktopPane jDesktopPane1;
     private javax.swing.JSeparator jSeparator1;
     private javax.swing.JSeparator jSeparator2;
     private javax.swing.JLabel lbAutor;
@@ -429,7 +432,7 @@ public class TelaGerenciaLista extends javax.swing.JDialog {
             }
         }
         
-        if(!existe || !(txtCodigo.getText().equals(""))){
+        if(!existe || !(txtCodigo.getText().equals("")) && !txtNome.getText().equals("")){
             if(modelChaves.buscarPalavras().size() > 0){
                 if(modelFilmesSelecionados.buscarFilmes().size() > 1) {
                     lista = new Lista(txtNome.getText(), modelChaves.buscarPalavras(), modelFilmesSelecionados.buscarFilmes());
@@ -443,14 +446,15 @@ public class TelaGerenciaLista extends javax.swing.JDialog {
                 JOptionPane.showMessageDialog(null, "Palavra Chave nao iformada.");
             }
         } else {
-            JOptionPane.showMessageDialog(null, "Ja contem uma lista com este nome!");
+            JOptionPane.showMessageDialog(null, "Ja contem uma lista com este nome! Ou o nome nao foi informado.");
         }
     }
     
     private void adicionarPalavra(){
-        if(!txtPalavraChave.getText().equals(""))
-            modelChaves.adicionarPalavra(new Palavra(txtPalavraChave.getText()));
-        txtPalavraChave.setText("");
+        if(!txtPalavraChave.getText().equals("")){
+            modelChaves.adicionarPalavra(new Palavra(0, txtPalavraChave.getText()));
+            txtPalavraChave.setText("");
+        }
     }
     
     private void removerPalavra(){

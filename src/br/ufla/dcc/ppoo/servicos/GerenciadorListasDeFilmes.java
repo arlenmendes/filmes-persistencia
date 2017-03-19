@@ -27,13 +27,15 @@ public class GerenciadorListasDeFilmes {
     public void cadastrarLista(Lista l) throws SQLException{
         l.setAutor(SessaoUsuario.obterInstancia().obterUsuario().obterNome());
         l.setUsuario_id(SessaoUsuario.obterInstancia().obterUsuario().obterId());
+        //passa 1 por padrao por que 1 indica lista privada
         l.setPublica(1);
         repositorioListas.adicionar(l);
     }
     
     public List<Lista> buscarListasUsuarioLogado() throws SQLException {
-        
-        List<Lista> listas = repositorioListas.buscaPorUsuario(SessaoUsuario.obterInstancia().obterUsuario().obterId());
+        System.out.println(SessaoUsuario.obterInstancia().obterUsuario().obterId());
+        List<Lista> listas = new ArrayList<>();
+        listas = repositorioListas.buscaPorUsuario(SessaoUsuario.obterInstancia().obterUsuario().obterId());
         return listas;
     }
     

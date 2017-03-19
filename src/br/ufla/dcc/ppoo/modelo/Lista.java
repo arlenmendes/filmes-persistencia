@@ -142,5 +142,27 @@ public class Lista {
         this.usuario_id = usuario_id;
     }
     
-    
+    public String toStringHtml() {
+        String dados = "<pre>";
+        
+        String titulo = "<b>Lista:</b> " + this.nome+ "<br>";
+        
+        String palavras = "<b>Palavras-chave:</b> ";
+        
+        for(Palavra p : this.chaves){
+            palavras += p.getNome() + ", ";
+        }
+        
+        palavras += "<br>";
+        
+        String filmes = "<b>Lista de Filmes:</b> <br>";
+        
+        for(Filme f : this.filmes){
+            filmes += "\t" + f.getId() + ". " + f.getNome() + " (" + f.getGenero() + ")<br>";
+        }
+        
+        dados += titulo + palavras + filmes + "</pre>";
+        
+        return dados;
+    }
 }

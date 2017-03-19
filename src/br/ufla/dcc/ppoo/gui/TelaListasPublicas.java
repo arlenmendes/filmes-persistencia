@@ -24,16 +24,12 @@ public class TelaListasPublicas extends javax.swing.JDialog {
     
     
     ListasTableModel modelListas;
-    FilmesTableModel modelFilmesDaLista;
     GerenciadorListasDeFilmes gerenciadorListasDeFilmes;
-    GerenciadorFilmes gerenciadorFilmes;
     /**
      * Creates new form TelaMinhasListasFilmes
      */
     public TelaListasPublicas(java.awt.Frame parent, boolean modal, List<Lista> listas) throws SQLException {
         super(parent, modal);
-        gerenciadorFilmes = new GerenciadorFilmes();
-        gerenciadorListasDeFilmes = new GerenciadorListasDeFilmes();
         construirTabelas(listas);
         initComponents();
         preparaComponenteInicial();
@@ -41,7 +37,6 @@ public class TelaListasPublicas extends javax.swing.JDialog {
     
     private void construirTabelas(List<Lista> ls) throws SQLException {
         modelListas = new ListasTableModel(ls);
-        modelFilmesDaLista = new FilmesTableModel();
     }
 
     /**
@@ -57,11 +52,6 @@ public class TelaListasPublicas extends javax.swing.JDialog {
         tbListas = new javax.swing.JTable();
         btnImportar = new javax.swing.JButton();
         btnDetalhes = new javax.swing.JButton();
-        jScrollPane3 = new javax.swing.JScrollPane();
-        tbFilmesDaLista = new javax.swing.JTable();
-        lbTabelaFilmes = new javax.swing.JLabel();
-        btnComentar = new javax.swing.JButton();
-        btnAvaliar = new javax.swing.JButton();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.DISPOSE_ON_CLOSE);
         setTitle("Gerenciar Listas");
@@ -75,6 +65,11 @@ public class TelaListasPublicas extends javax.swing.JDialog {
         jScrollPane1.setViewportView(tbListas);
 
         btnImportar.setText("Importar");
+        btnImportar.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                btnImportarActionPerformed(evt);
+            }
+        });
 
         btnDetalhes.setText("Detalhes");
         btnDetalhes.addActionListener(new java.awt.event.ActionListener() {
@@ -83,57 +78,29 @@ public class TelaListasPublicas extends javax.swing.JDialog {
             }
         });
 
-        tbFilmesDaLista.setModel(modelFilmesDaLista);
-        jScrollPane3.setViewportView(tbFilmesDaLista);
-
-        lbTabelaFilmes.setFont(new java.awt.Font("Open Sans", 1, 18)); // NOI18N
-        lbTabelaFilmes.setText("Filmes");
-
-        btnComentar.setText("Comentar");
-
-        btnAvaliar.setText("Avaliar");
-
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(getContentPane());
         getContentPane().setLayout(layout);
         layout.setHorizontalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(layout.createSequentialGroup()
                 .addContainerGap()
-                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addComponent(jScrollPane1, javax.swing.GroupLayout.Alignment.TRAILING)
-                    .addComponent(jScrollPane3)
-                    .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, layout.createSequentialGroup()
-                        .addComponent(btnComentar, javax.swing.GroupLayout.PREFERRED_SIZE, 145, javax.swing.GroupLayout.PREFERRED_SIZE)
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                        .addComponent(btnAvaliar, javax.swing.GroupLayout.PREFERRED_SIZE, 145, javax.swing.GroupLayout.PREFERRED_SIZE)
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                        .addComponent(btnImportar, javax.swing.GroupLayout.PREFERRED_SIZE, 145, javax.swing.GroupLayout.PREFERRED_SIZE)
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                        .addComponent(btnDetalhes, javax.swing.GroupLayout.PREFERRED_SIZE, 145, javax.swing.GroupLayout.PREFERRED_SIZE))
-                    .addGroup(layout.createSequentialGroup()
-                        .addGap(263, 263, 263)
-                        .addComponent(lbTabelaFilmes)))
+                .addComponent(jScrollPane1, javax.swing.GroupLayout.DEFAULT_SIZE, 598, Short.MAX_VALUE)
                 .addContainerGap())
+            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, layout.createSequentialGroup()
+                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                .addComponent(btnImportar, javax.swing.GroupLayout.PREFERRED_SIZE, 145, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addComponent(btnDetalhes, javax.swing.GroupLayout.PREFERRED_SIZE, 145, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addGap(160, 160, 160))
         );
         layout.setVerticalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(layout.createSequentialGroup()
-                .addComponent(jScrollPane1, javax.swing.GroupLayout.PREFERRED_SIZE, 182, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 58, Short.MAX_VALUE)
-                .addComponent(lbTabelaFilmes)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addGroup(layout.createSequentialGroup()
-                        .addGap(264, 264, 264)
-                        .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                            .addComponent(btnImportar)
-                            .addComponent(btnDetalhes)))
-                    .addGroup(layout.createSequentialGroup()
-                        .addComponent(jScrollPane3, javax.swing.GroupLayout.PREFERRED_SIZE, 258, javax.swing.GroupLayout.PREFERRED_SIZE)
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                        .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                            .addComponent(btnComentar)
-                            .addComponent(btnAvaliar))))
+                .addComponent(jScrollPane1, javax.swing.GroupLayout.DEFAULT_SIZE, 300, Short.MAX_VALUE)
+                .addGap(18, 18, 18)
+                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                    .addComponent(btnImportar)
+                    .addComponent(btnDetalhes))
                 .addContainerGap())
         );
 
@@ -142,18 +109,29 @@ public class TelaListasPublicas extends javax.swing.JDialog {
     }// </editor-fold>//GEN-END:initComponents
 
     private void tbListasMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_tbListasMouseClicked
-        try {
-            preencheTabelaFilmes();
-            if(SessaoUsuario.obterInstancia().estahLogado())
-                preparaComponenteSelecionaLista();
-        } catch (SQLException ex) {
-            Logger.getLogger(TelaMinhasListasFilmes.class.getName()).log(Level.SEVERE, null, ex);
-        }
+        if(SessaoUsuario.obterInstancia().estahLogado())
+            preparaComponenteSelecionaLista();
+        btnDetalhes.setEnabled(true);
     }//GEN-LAST:event_tbListasMouseClicked
 
     private void btnDetalhesActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnDetalhesActionPerformed
+        TelaDetalhesLista telaDL;
+        try {
+            telaDL = new TelaDetalhesLista(null, true, modelListas.buscarLista(tbListas.getSelectedRow()));
+            telaDL.setVisible(true);
+        } catch (SQLException ex) {
+            Logger.getLogger(TelaListasPublicas.class.getName()).log(Level.SEVERE, null, ex);
+        }
         
     }//GEN-LAST:event_btnDetalhesActionPerformed
+
+    private void btnImportarActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnImportarActionPerformed
+        try {
+            importarLista();
+        } catch (SQLException ex) {
+            JOptionPane.showMessageDialog(null, "Erro: \n\n " + ex.getMessage());
+        }
+    }//GEN-LAST:event_btnImportarActionPerformed
         
     /**
      * @param args the command line arguments
@@ -205,33 +183,55 @@ public class TelaListasPublicas extends javax.swing.JDialog {
     }
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
-    private javax.swing.JButton btnAvaliar;
-    private javax.swing.JButton btnComentar;
     private javax.swing.JButton btnDetalhes;
     private javax.swing.JButton btnImportar;
     private javax.swing.JScrollPane jScrollPane1;
-    private javax.swing.JScrollPane jScrollPane3;
-    private javax.swing.JLabel lbTabelaFilmes;
-    private javax.swing.JTable tbFilmesDaLista;
     private javax.swing.JTable tbListas;
     // End of variables declaration//GEN-END:variables
-    private void preencheTabelaFilmes() throws SQLException {
-        modelFilmesDaLista.atualizarListaFilmes(modelListas.buscarLista(tbListas.getSelectedRow()).getFilmes());
-    }
-    
+        
     private void preparaComponenteInicial(){
         btnImportar.setEnabled(false);
         btnDetalhes.setEnabled(false);
-        btnComentar.setEnabled(false);
-        btnAvaliar.setEnabled(false);
-        
-        modelFilmesDaLista.limpar();
     }
     
     private void preparaComponenteSelecionaLista(){
         btnImportar.setEnabled(true);
         btnDetalhes.setEnabled(true);
-        btnComentar.setEnabled(true);
-        btnAvaliar.setEnabled(true);
+    }
+    
+    private void importarLista() throws SQLException {
+        Lista lista = modelListas.buscarLista(tbListas.getSelectedRow());
+        List<Lista> minhasListas = gerenciadorListasDeFilmes.buscarListasUsuarioLogado();
+        
+        boolean dono = false;
+        
+        for(Lista l : minhasListas){
+            if(l.getId() == lista.getId()){
+                dono = true;
+            }
+        }
+        
+        if(!dono){
+            for(Lista l : minhasListas){
+                while(lista.getNome().equals(l.getNome())) {
+                    lista.setNome(JOptionPane.showInputDialog("Voce ja possui uma lista com o nome " +lista.getNome() + ". Por favor informe um nome diferente."));
+                }
+            }
+        } else {
+            JOptionPane.showMessageDialog(null, "a lista " + " ja esta em suas listas");
+        }
+        
+        
+    }
+    
+    private boolean verificaNomeIgual(Lista lista, List<Lista> listas) {
+        boolean resposta = false;
+        for(Lista l : listas){
+            if(l.getNome().equals(lista.getNome())){
+                resposta = true;
+            }
+        }
+        
+        return resposta;
     }
 }

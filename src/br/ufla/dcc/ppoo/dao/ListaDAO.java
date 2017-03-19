@@ -33,10 +33,11 @@ public class ListaDAO {
         if(conexao != null) {
             Statement comando = conexao.createStatement();
 
-            String sql = "INSERT INTO lista(nome, autor, usuario_id) "
+            String sql = "INSERT INTO lista(nome, autor, usuario_id, publica) "
                        + "VALUES('" + l.getNome() + "', '"
                                     + l.getAutor() + "',"
-                                    + l.getUsuario_id() +")";
+                                    + l.getUsuario_id() + ", "
+                                    + l.isPublica() +")";
             
             comando.executeUpdate(sql);
             
