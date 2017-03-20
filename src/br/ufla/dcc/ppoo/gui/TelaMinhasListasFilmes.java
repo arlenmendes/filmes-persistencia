@@ -362,5 +362,6 @@ public class TelaMinhasListasFilmes extends javax.swing.JDialog {
         
         gravarArq.print(lista.toStringHtml());
         arquivo.close();
+        JOptionPane.showMessageDialog(null, "Arquivo " + lista.getNome() + ".html criado na raiz do projeto.");
     }
 }
