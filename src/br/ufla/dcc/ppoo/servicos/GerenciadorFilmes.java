@@ -9,6 +9,7 @@ import br.ufla.dcc.ppoo.dao.FilmeDAO;
 import br.ufla.dcc.ppoo.modelo.Filme;
 import br.ufla.dcc.ppoo.seguranca.SessaoUsuario;
 import java.sql.SQLException;
+import static java.util.Collections.list;
 import java.util.List;
 
 /**
@@ -41,6 +42,13 @@ public class GerenciadorFilmes {
     
     public Filme buscaUltimoFilmeCadastrado() throws SQLException {
         return repositorioFilme.buscarUltimoCadastrado();
+    }
+    
+    public List<Filme> adicionarFilmesImportados(List<Filme> filmes) throws SQLException {
+        for(Filme f : filmes){
+            f.setUsuario_id(SessaoUsuario.obterInstancia().obterUsuario().obterId());
+        }
+        return repositorioFilme.adicionarImportados(filmes);
     }
     
 }

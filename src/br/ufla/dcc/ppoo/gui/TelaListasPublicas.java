@@ -5,6 +5,7 @@
  */
 package br.ufla.dcc.ppoo.gui;
 
+import br.ufla.dcc.ppoo.modelo.Filme;
 import br.ufla.dcc.ppoo.modelo.Lista;
 import br.ufla.dcc.ppoo.seguranca.SessaoUsuario;
 import br.ufla.dcc.ppoo.servicos.GerenciadorFilmes;
@@ -25,11 +26,14 @@ public class TelaListasPublicas extends javax.swing.JDialog {
     
     ListasTableModel modelListas;
     GerenciadorListasDeFilmes gerenciadorListasDeFilmes;
+    GerenciadorFilmes gerenciadorFilmes;
     /**
      * Creates new form TelaMinhasListasFilmes
      */
     public TelaListasPublicas(java.awt.Frame parent, boolean modal, List<Lista> listas) throws SQLException {
         super(parent, modal);
+        gerenciadorListasDeFilmes = new GerenciadorListasDeFilmes();
+        gerenciadorFilmes = new GerenciadorFilmes();
         construirTabelas(listas);
         initComponents();
         preparaComponenteInicial();
@@ -213,12 +217,19 @@ public class TelaListasPublicas extends javax.swing.JDialog {
         
         if(!dono){
             for(Lista l : minhasListas){
-                while(lista.getNome().equals(l.getNome())) {
-                    lista.setNome(JOptionPane.showInputDialog("Voce ja possui uma lista com o nome " +lista.getNome() + ". Por favor informe um nome diferente."));
+                String novoNome = "";
+                while(lista.getNome().equals(l.getNome()) && novoNome != null) {
+                    novoNome = JOptionPane.showInputDialog("Voce ja possui uma lista com o nome: " +lista.getNome() + ".\nPor favor informe um nome diferente.");
+                    if(novoNome != null && !novoNome.equals("")){
+                        lista.setNome(novoNome);
+                        lista.setFilmes(gerenciadorFilmes.adicionarFilmesImportados(lista.getFilmes()));
+                        gerenciadorListasDeFilmes.cadastrarLista(lista);
+                        JOptionPane.showMessageDialog(null, "Lista " + lista.getNome() + "Importada.");
+                    }
                 }
             }
         } else {
-            JOptionPane.showMessageDialog(null, "a lista " + " ja esta em suas listas");
+            JOptionPane.showMessageDialog(null, "a lista " + lista.getNome() + " ja esta em suas listas");
         }
         
         

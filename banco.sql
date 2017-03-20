@@ -3,7 +3,7 @@
 -- http://www.phpmyadmin.net
 --
 -- Host: localhost
--- Generation Time: 07-Mar-2017 às 03:26
+-- Generation Time: 20-Mar-2017 às 01:50
 -- Versão do servidor: 10.1.19-MariaDB
 -- PHP Version: 7.0.9
 
@@ -23,6 +23,19 @@ SET time_zone = "+00:00";
 -- --------------------------------------------------------
 
 --
+-- Estrutura da tabela `avaliacao`
+--
+
+CREATE TABLE `avaliacao` (
+  `id` int(11) NOT NULL,
+  `nota` int(11) NOT NULL,
+  `lista_id` int(11) NOT NULL,
+  `usuario_id` int(11) NOT NULL
+) ENGINE=InnoDB DEFAULT CHARSET=latin1;
+
+-- --------------------------------------------------------
+
+--
 -- Estrutura da tabela `chaves`
 --
 
@@ -30,6 +43,19 @@ CREATE TABLE `chaves` (
   `id` int(11) NOT NULL,
   `nome` varchar(11) NOT NULL,
   `lista_id` int(11) NOT NULL
+) ENGINE=InnoDB DEFAULT CHARSET=latin1;
+
+-- --------------------------------------------------------
+
+--
+-- Estrutura da tabela `comentario`
+--
+
+CREATE TABLE `comentario` (
+  `id` int(11) NOT NULL,
+  `texto` varchar(155) NOT NULL,
+  `lista_id` int(11) NOT NULL,
+  `data` datetime NOT NULL DEFAULT CURRENT_TIMESTAMP
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1;
 
 -- --------------------------------------------------------
@@ -68,7 +94,7 @@ CREATE TABLE `filme` (
 
 CREATE TABLE `lista` (
   `id` int(11) NOT NULL,
-  `nome` varchar(11) NOT NULL,
+  `nome` varchar(110) NOT NULL,
   `autor` varchar(11) NOT NULL,
   `curtidas` int(11) NOT NULL DEFAULT '0',
   `publica` tinyint(1) NOT NULL DEFAULT '0',
@@ -129,9 +155,22 @@ CREATE ALGORITHM=UNDEFINED DEFINER=`root`@`localhost` SQL SECURITY DEFINER VIEW 
 --
 
 --
+-- Indexes for table `avaliacao`
+--
+ALTER TABLE `avaliacao`
+  ADD PRIMARY KEY (`id`);
+
+--
 -- Indexes for table `chaves`
 --
 ALTER TABLE `chaves`
+  ADD PRIMARY KEY (`id`),
+  ADD KEY `FK_lista_chaves` (`lista_id`);
+
+--
+-- Indexes for table `comentario`
+--
+ALTER TABLE `comentario`
   ADD PRIMARY KEY (`id`);
 
 --
@@ -169,9 +208,19 @@ ALTER TABLE `usuario`
 --
 
 --
+-- AUTO_INCREMENT for table `avaliacao`
+--
+ALTER TABLE `avaliacao`
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT;
+--
 -- AUTO_INCREMENT for table `chaves`
 --
 ALTER TABLE `chaves`
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT;
+--
+-- AUTO_INCREMENT for table `comentario`
+--
+ALTER TABLE `comentario`
   MODIFY `id` int(11) NOT NULL AUTO_INCREMENT;
 --
 -- AUTO_INCREMENT for table `curtir`
@@ -198,6 +247,16 @@ ALTER TABLE `lista_filme`
 --
 ALTER TABLE `usuario`
   MODIFY `id` int(11) NOT NULL AUTO_INCREMENT;
+--
+-- Constraints for dumped tables
+--
+
+--
+-- Limitadores para a tabela `chaves`
+--
+ALTER TABLE `chaves`
+  ADD CONSTRAINT `FK_lista_chaves` FOREIGN KEY (`lista_id`) REFERENCES `lista` (`id`);
+
 /*!40101 SET CHARACTER_SET_CLIENT=@OLD_CHARACTER_SET_CLIENT */;
 /*!40101 SET CHARACTER_SET_RESULTS=@OLD_CHARACTER_SET_RESULTS */;
 /*!40101 SET COLLATION_CONNECTION=@OLD_COLLATION_CONNECTION */;

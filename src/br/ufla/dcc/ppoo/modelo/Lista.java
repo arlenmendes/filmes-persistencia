@@ -19,6 +19,8 @@ public class Lista {
     private String nome;
     private List<Palavra> chaves;
     private List<Filme> filmes;
+    private List<Avaliacao> avaliacoes;
+    private List<Comentario> comentarios;
     private String autor;
     private int publica;
     private int usuario_id;
@@ -34,7 +36,7 @@ public class Lista {
     }
     
     //esta funcao deve ser chamada para manipular das demais formas
-    public Lista(int id, String n, List<Palavra> c, List<Filme> filmes, int usuario_id, String autor, int p){
+    public Lista(int id, String n, List<Palavra> c, List<Filme> filmes, int usuario_id, String autor, int p, List<Avaliacao> avaliacoes, List<Comentario> comentarios){
         this.id = id;
         this.nome = n;
         this.autor = autor;
@@ -42,6 +44,8 @@ public class Lista {
         this.usuario_id = usuario_id;
         this.filmes = filmes;
         this.publica = p;
+        this.avaliacoes = avaliacoes;
+        this.comentarios = comentarios;
     }
 
     /**
@@ -141,11 +145,60 @@ public class Lista {
     public void setUsuario_id(int usuario_id) {
         this.usuario_id = usuario_id;
     }
+
+    /**
+     * @return the avaliacoes
+     */
+    public List<Avaliacao> getAvaliacoes() {
+        return avaliacoes;
+    }
+
+    /**
+     * @param avaliacoes the avaliacoes to set
+     */
+    public void setAvaliacoes(List<Avaliacao> avaliacoes) {
+        this.avaliacoes = avaliacoes;
+    }
+
+    /**
+     * @return the comentarios
+     */
+    public List<Comentario> getComentarios() {
+        return comentarios;
+    }
+
+    /**
+     * @param comentarios the comentarios to set
+     */
+    public void setComentarios(List<Comentario> comentarios) {
+        this.comentarios = comentarios;
+    }
     
-    public String toStringHtml() {
+    public String toStringTextPane() {
+        
+        int totalAvaliacao = 0;
+        
+        for(Avaliacao a : getAvaliacoes()) {
+            totalAvaliacao += a.getNota();
+        }
+        
+        String avaliacao;
+        
+        if(totalAvaliacao < 1000) {
+            avaliacao = Integer.toString(totalAvaliacao);
+        } else if (totalAvaliacao < 1000000){
+            totalAvaliacao = totalAvaliacao / 1000;
+            
+            avaliacao = totalAvaliacao + "k";
+        } else {
+            totalAvaliacao = totalAvaliacao / 1000000;
+            
+            avaliacao = totalAvaliacao + "m";
+        }
+        
         String dados = "<pre>";
         
-        String titulo = "<b>Lista:</b> " + this.nome+ "<br>";
+        String titulo = "<b>Lista:</b> " + this.nome + " (" + avaliacao + ")" + "<br>";
         
         String palavras = "<b>Palavras-chave:</b> ";
         
@@ -160,9 +213,84 @@ public class Lista {
         for(Filme f : this.filmes){
             filmes += "\t" + f.getId() + ". " + f.getNome() + " (" + f.getGenero() + ")<br>";
         }
+        String comentarios = "<b>Comentarios</b> <br>";
         
-        dados += titulo + palavras + filmes + "</pre>";
+        for(Comentario c : this.getComentarios()){
+            comentarios += "\t - " + c.getTexto();
+            if(c.getDiasAtras() == 0 ){
+                comentarios += " (Hoje)<br>";
+            } else {
+                comentarios += "(" + c.getDiasAtras() + "d atras)<br>";
+            }
+        }
+        
+        dados += titulo + palavras + filmes + comentarios + "</pre>";
         
         return dados;
+    }
+    
+    public String toStringHtml() {
+        
+        int totalAvaliacao = 0;
+        
+        for(Avaliacao a : getAvaliacoes()) {
+            totalAvaliacao += a.getNota();
+        }
+        
+        String avaliacao;
+        
+        if(totalAvaliacao < 1000) {
+            avaliacao = Integer.toString(totalAvaliacao);
+        } else if (totalAvaliacao < 1000000){
+            totalAvaliacao = totalAvaliacao / 1000;
+            
+            avaliacao = totalAvaliacao + "k";
+        } else {
+            totalAvaliacao = totalAvaliacao / 1000000;
+            
+            avaliacao = totalAvaliacao + "m";
+        }
+        
+        
+        String dados = "";
+        String abreHtml = "<html>", fechaHtml = "</html>";
+        String head = "<head>\n" +
+                "	<meta charset=\"UTF-8\">\n" +
+        "	<title>Teste</title>\n" +
+        "	<link rel=\"stylesheet\" href=\"style.css\">\n" +
+        "</head>";
+        
+        String body = "<body>";
+        
+        body += "<div class=\"container\">";
+        body += "<div class=\"cabecalho\">";
+        body += "<h1>" + this.getNome() + " (" + avaliacao + ")</h1>";
+        body += "<h3>" + this.getAutor() + "</h3>";
+        body += "</div>";
+        body += "<div class=\"conteudo\">";
+        body += "<div class=\"dados\">";
+        body += "<h2>Filmes</h2>";
+        body += "<ul>";
+        for(Filme f : this.filmes){
+            body +="<li> - " + f.getNome() + "  (" + f.getGenero() +  ")</li>";
+        }
+        body += "</ul></div>";
+        body += "<div class=\"dados\">";
+        body += "<h2>Comentarios</h2>";
+        body += "<ul>";
+        for(Comentario c : this.comentarios){
+            body += "<li> - " + c.getTexto();
+            if(c.getDiasAtras() == 0 ){
+                body += "  (Hoje)</li>";
+            } else {
+                body += "  (" + c.getDiasAtras() + "d atras)</li>";
+            }
+        }
+        body += "</ul></div>";
+        body += "</div>";
+        body += "</div>";
+        body += "</body>";
+
+        return dados += abreHtml + head + body + fechaHtml;
     }
 }

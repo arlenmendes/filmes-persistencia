@@ -5,6 +5,8 @@
  */
 package br.ufla.dcc.ppoo.dao;
 
+import br.ufla.dcc.ppoo.modelo.Avaliacao;
+import br.ufla.dcc.ppoo.modelo.Comentario;
 import br.ufla.dcc.ppoo.modelo.Filme;
 import br.ufla.dcc.ppoo.modelo.Lista;
 import br.ufla.dcc.ppoo.modelo.Palavra;
@@ -13,9 +15,13 @@ import java.sql.Connection;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Calendar;
+import java.util.Date;
 import java.util.List;
 import javax.swing.JOptionPane;
+import javax.xml.transform.Result;
 
 /**
  *
@@ -78,6 +84,8 @@ public class ListaDAO {
             String sqlLista = "SELECT * FROM lista where id = " + id + ";";
             String sqlChaves = "SELECT * FROM chaves where lista_id = " + id + ";";
             String sqlFilmes = "SELECT * FROM lista_filme_view WHERE lista.id = " + id +";";
+            String sqlAvaliacoes = "SELECT * FROM avaliacao WHERE lista_id = " + id +";";
+            String sqlComentarios = "SELECT * FROM comentario WHERE lista_id = " + id +";";
             
             //recuperar as chaves da lista
             ResultSet chave = comando.executeQuery(sqlChaves);
@@ -93,10 +101,38 @@ public class ListaDAO {
                 filmes.add(new Filme(filme.getInt("id"), filme.getString("nome"), filme.getString("genero"), filme.getInt("ano"), filme.getInt("duracao"), filme.getString("descricao")));
             }
             
+            //recuperar as avaliacoes
+            ResultSet avaliacoesRS = comando.executeQuery(sqlAvaliacoes);
+            List<Avaliacao> avaliacoes = new ArrayList<>();
+            while(avaliacoesRS.next()){
+                avaliacoes.add(new Avaliacao(avaliacoesRS.getInt("id"), avaliacoesRS.getInt("nota"), avaliacoesRS.getInt("lista_id"), avaliacoesRS.getInt("usuario_id")));
+            }
+            
+            //Recuperar os comentarios
+            ResultSet comentarioRS = comando.executeQuery(sqlComentarios);
+            List<Comentario> comentarios = new ArrayList<>();
+            while(comentarioRS.next()){
+                //calcula quantos dias se passaram
+                Date dataComentario = comentarioRS.getDate("data");
+                Date atual = new Date(System.currentTimeMillis());
+                SimpleDateFormat format = new SimpleDateFormat("dd/MM/yyyy");
+                Calendar dts = Calendar.getInstance();
+                dts.setTime(new Date());
+                Calendar dte = Calendar.getInstance();
+                dte.setTime(dataComentario);
+                dts.add(Calendar.DATE, - dte.get(Calendar.DAY_OF_MONTH));
+                int dias = dts.get(Calendar.DAY_OF_MONTH);
+                
+                comentarios.add(new Comentario(comentarioRS.getInt("id"), comentarioRS.getString("texto"), dias, comentarioRS.getInt("lista_id")));
+                
+            }
+            
+            
+            
             //recuperar a Lista pelo id
             ResultSet result = comando.executeQuery(sqlLista);
             result.next();
-            return new Lista(result.getInt("id"), result.getString("nome"), chaves, filmes, result.getInt("usuario_id"), result.getString("autor"), result.getInt("publica"));
+            return new Lista(result.getInt("id"), result.getString("nome"), chaves, filmes, result.getInt("usuario_id"), result.getString("autor"), result.getInt("publica"), avaliacoes, comentarios);
         } else {
             JOptionPane.showMessageDialog(null, "Erro com a conexao ao Banco de Dados.");
             return null;
@@ -246,7 +282,40 @@ public class ListaDAO {
                 }
                 statementChaves.close();
                 
-                listas.add(new Lista(listasRS.getInt("id"), listasRS.getString("nome"), chaves, filmes, listasRS.getInt("usuario_id"), listasRS.getString("autor"), listasRS.getInt("publica")));
+                Statement statementAvaliacoes = conexao.createStatement();
+                
+                String sqlAvaliacoes = "SELECT * FROM avaliacao where lista_id = " + listasRS.getInt("id");
+                ResultSet avaliacao = statementAvaliacoes.executeQuery(sqlAvaliacoes);
+                List<Avaliacao> avaliacoes = new ArrayList<>();
+                while(avaliacao.next()){
+                    avaliacoes.add(new Avaliacao(avaliacao.getInt("id"), avaliacao.getInt("nota"), avaliacao.getInt("lista_id"), avaliacao.getInt("usuario_id")));
+                }
+                
+                statementAvaliacoes.close();
+                
+                //Recuperar os comentarios
+                
+                Statement statementComentario = conexao.createStatement();
+                String sqlComentarios = "SELECT * FROM comentario where lista_id = " + listasRS.getInt("id");;
+                ResultSet comentarioRS = statementComentario.executeQuery(sqlComentarios);
+                List<Comentario> comentarios = new ArrayList<>();
+                while(comentarioRS.next()){
+                    //calcula quantos dias se passaram
+                    Date dataComentario = comentarioRS.getDate("data");
+                    Date atual = new Date(System.currentTimeMillis());
+                    SimpleDateFormat format = new SimpleDateFormat("dd/MM/yyyy");
+                    Calendar dts = Calendar.getInstance();
+                    dts.setTime(atual);
+                    Calendar dte = Calendar.getInstance();
+                    dte.setTime(dataComentario);
+                    dts.add(Calendar.DATE, - dte.get(Calendar.DATE));
+                    int dias = dts.get(Calendar.DAY_OF_MONTH);
+
+                    comentarios.add(new Comentario(comentarioRS.getInt("id"), comentarioRS.getString("texto"), dias, comentarioRS.getInt("lista_id")));
+
+                }
+                
+                listas.add(new Lista(listasRS.getInt("id"), listasRS.getString("nome"), chaves, filmes, listasRS.getInt("usuario_id"), listasRS.getString("autor"), listasRS.getInt("publica"), avaliacoes, comentarios));
             }
             statementLista.close();
             Conexao.fecharConexao();
@@ -301,7 +370,38 @@ public class ListaDAO {
                 }
                 statementChaves.close();
                 
-                listas.add(new Lista(listasRS.getInt("id"), listasRS.getString("nome"), chaves, filmes, listasRS.getInt("usuario_id"), listasRS.getString("autor"), listasRS.getInt("publica")));
+                Statement statementAvaliacoes = conexao.createStatement();
+                
+                String sqlAvaliacoes = "SELECT * FROM avaliacao where lista_id = " + listasRS.getInt("id");
+                ResultSet avaliacao = statementAvaliacoes.executeQuery(sqlAvaliacoes);
+                List<Avaliacao> avaliacoes = new ArrayList<>();
+                while(avaliacao.next()){
+                    avaliacoes.add(new Avaliacao(avaliacao.getInt("id"), avaliacao.getInt("nota"), avaliacao.getInt("lista_id"), avaliacao.getInt("usuario_id")));
+                }
+                statementAvaliacoes.close();
+                
+                Statement statementComentario = conexao.createStatement();
+                String sqlComentarios = "SELECT * FROM comentario where lista_id = " + listasRS.getInt("id");;
+                ResultSet comentarioRS = statementComentario.executeQuery(sqlComentarios);
+                List<Comentario> comentarios = new ArrayList<>();
+                while(comentarioRS.next()){
+                    //calcula quantos dias se passaram
+                    Date dataComentario = comentarioRS.getDate("data");
+                    Date atual = new Date(System.currentTimeMillis());
+                    SimpleDateFormat format = new SimpleDateFormat("dd/MM/yyyy");
+                    Calendar dts = Calendar.getInstance();
+                    dts.setTime(atual);
+                    Calendar dte = Calendar.getInstance();
+                    dte.setTime(dataComentario);
+                    dts.add(Calendar.DATE, - dte.get(Calendar.DATE));
+                    int dias = dts.get(Calendar.DAY_OF_MONTH);
+
+                    comentarios.add(new Comentario(comentarioRS.getInt("id"), comentarioRS.getString("texto"), dias, comentarioRS.getInt("lista_id")));
+
+                }
+                statementComentario.close();
+                
+                listas.add(new Lista(listasRS.getInt("id"), listasRS.getString("nome"), chaves, filmes, listasRS.getInt("usuario_id"), listasRS.getString("autor"), listasRS.getInt("publica"), avaliacoes, comentarios));
             }
             statementLista.close();
             Conexao.fecharConexao();
@@ -309,6 +409,34 @@ public class ListaDAO {
         } else {
             JOptionPane.showMessageDialog(null, "Erro com a conexao ao Banco de Dados.");
             return null;
+        }
+    }
+    
+    public void adicionarAvaliacao(Avaliacao avaliacao) throws SQLException {
+        conectar();
+        if(conexao != null) {
+            Statement comando = conexao.createStatement();
+            
+            String sql = "INSERT INTO avaliacao(nota, lista_id, usuario_id) VALUES(" + avaliacao.getNota() +", " + avaliacao.getLista_id() + ", " + avaliacao.getUsuario_id() + ");";
+            comando.executeUpdate(sql);
+            comando.close();
+            Conexao.fecharConexao();
+        } else {
+            JOptionPane.showMessageDialog(null, "Erro com a conexao ao Banco de Dados.");
+        }
+    }
+    
+    public void comentar(Comentario c) throws SQLException {
+        conectar();
+        if(conexao != null){
+            
+            Statement comando = conexao.createStatement();
+            
+            String sql = "INSERT INTO comentario(texto, lista_id) VALUES('" + c.getTexto() + "', " + c.getLista_id() + ");";
+            
+            comando.executeUpdate(sql);
+            comando.close();
+            Conexao.fecharConexao();
         }
     }
 }

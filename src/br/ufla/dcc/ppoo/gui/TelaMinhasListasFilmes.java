@@ -8,6 +8,9 @@ package br.ufla.dcc.ppoo.gui;
 import br.ufla.dcc.ppoo.modelo.Lista;
 import br.ufla.dcc.ppoo.servicos.GerenciadorFilmes;
 import br.ufla.dcc.ppoo.servicos.GerenciadorListasDeFilmes;
+import java.io.FileWriter;
+import java.io.IOException;
+import java.io.PrintWriter;
 import java.sql.SQLException;
 import java.util.logging.Level;
 import java.util.logging.Logger;
@@ -55,7 +58,7 @@ public class TelaMinhasListasFilmes extends javax.swing.JDialog {
         tbListas = new javax.swing.JTable();
         btnNovaLista = new javax.swing.JButton();
         btnEditarLista = new javax.swing.JButton();
-        btnDeletarLista = new javax.swing.JButton();
+        btnExportar = new javax.swing.JButton();
         btnDetalhes = new javax.swing.JButton();
         jScrollPane3 = new javax.swing.JScrollPane();
         tbFilmesDaLista = new javax.swing.JTable();
@@ -89,7 +92,12 @@ public class TelaMinhasListasFilmes extends javax.swing.JDialog {
             }
         });
 
-        btnDeletarLista.setText("Deletar");
+        btnExportar.setText("Exportar(HTML)");
+        btnExportar.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                btnExportarActionPerformed(evt);
+            }
+        });
 
         btnDetalhes.setText("Detalhes");
         btnDetalhes.addActionListener(new java.awt.event.ActionListener() {
@@ -130,7 +138,7 @@ public class TelaMinhasListasFilmes extends javax.swing.JDialog {
                                     .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                                     .addComponent(btnEditarLista, javax.swing.GroupLayout.PREFERRED_SIZE, 145, javax.swing.GroupLayout.PREFERRED_SIZE)
                                     .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                                    .addComponent(btnDeletarLista, javax.swing.GroupLayout.PREFERRED_SIZE, 145, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                    .addComponent(btnExportar, javax.swing.GroupLayout.PREFERRED_SIZE, 145, javax.swing.GroupLayout.PREFERRED_SIZE)
                                     .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                                     .addComponent(btnDetalhes, javax.swing.GroupLayout.PREFERRED_SIZE, 145, javax.swing.GroupLayout.PREFERRED_SIZE)))
                             .addGroup(layout.createSequentialGroup()
@@ -164,7 +172,7 @@ public class TelaMinhasListasFilmes extends javax.swing.JDialog {
                         .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                             .addComponent(btnNovaLista)
                             .addComponent(btnEditarLista)
-                            .addComponent(btnDeletarLista)
+                            .addComponent(btnExportar)
                             .addComponent(btnDetalhes)))
                     .addComponent(jScrollPane3, javax.swing.GroupLayout.PREFERRED_SIZE, 258, javax.swing.GroupLayout.PREFERRED_SIZE))
                 .addContainerGap())
@@ -248,6 +256,16 @@ public class TelaMinhasListasFilmes extends javax.swing.JDialog {
         }
     }//GEN-LAST:event_btnAlterarVisibilidadeActionPerformed
 
+    private void btnExportarActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnExportarActionPerformed
+        if(tbListas.getSelectedRow() >= 0){
+            try {
+                exportarListaHtml(tbListas.getSelectedRow());
+            } catch (IOException ex) {
+                Logger.getLogger(TelaMinhasListasFilmes.class.getName()).log(Level.SEVERE, null, ex);
+            }
+        }
+    }//GEN-LAST:event_btnExportarActionPerformed
+
     /**
      * @param args the command line arguments
      */
@@ -298,9 +316,9 @@ public class TelaMinhasListasFilmes extends javax.swing.JDialog {
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JButton btnAlterarVisibilidade;
-    private javax.swing.JButton btnDeletarLista;
     private javax.swing.JButton btnDetalhes;
     private javax.swing.JButton btnEditarLista;
+    private javax.swing.JButton btnExportar;
     private javax.swing.JButton btnNovaLista;
     private javax.swing.JScrollPane jScrollPane1;
     private javax.swing.JScrollPane jScrollPane3;
@@ -315,7 +333,7 @@ public class TelaMinhasListasFilmes extends javax.swing.JDialog {
     }
     
     private void preparaComponenteInicial(){
-        btnDeletarLista.setEnabled(false);
+        btnExportar.setEnabled(false);
         btnNovaLista.setEnabled(true);
         btnDetalhes.setEnabled(true);
         btnEditarLista.setEnabled(false);
@@ -328,11 +346,21 @@ public class TelaMinhasListasFilmes extends javax.swing.JDialog {
     }
     
     private void preparaComponenteSelecionaLista(){
-        btnDeletarLista.setEnabled(true);
+        btnExportar.setEnabled(true);
         btnNovaLista.setEnabled(true);
         btnDetalhes.setEnabled(true);
         btnEditarLista.setEnabled(true);
         btnDetalhes.setEnabled(true);
         btnAlterarVisibilidade.setEnabled(true);
+    }
+    
+    public void exportarListaHtml(int linha) throws IOException {
+        Lista lista =modelListas.buscarLista(linha);
+        
+        FileWriter arquivo = new FileWriter(lista.getNome() + ".html");
+        PrintWriter gravarArq = new PrintWriter(arquivo);
+        
+        gravarArq.print(lista.toStringHtml());
+        arquivo.close();
     }
 }

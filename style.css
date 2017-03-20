@@ -1,0 +1,46 @@
+*{
+	margin: 0;
+	padding: 0;
+	/*color: #00001B;*/
+}
+body{
+	background: #A0CEDD;
+}
+
+.container {
+	color: #00005E;
+	margin-left: auto;
+	margin-right: auto;
+	width: 600px;
+	height: 100vh;
+	background: #00C5E2;
+}
+
+.cabecalho {
+	text-align: center;
+	width: 100%;
+	background: #84DCFF;
+}
+
+.cabecalho span {
+	width: 100%;
+	margin-left: 15px;
+}
+
+.conteudo {
+	width: 100%;
+}
+
+.dados {
+	width: 90%;
+	margin-left: auto;
+	margin-right: auto;
+
+}
+
+.dados ul{
+	width: 90%;
+	margin-left: auto;
+	margin-right: auto;
+	list-style: none;
+}

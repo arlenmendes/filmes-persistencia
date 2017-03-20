@@ -172,21 +172,24 @@ public class TelaPrincipal {
                 String filtro = "";
                 
                 filtro = JOptionPane.showInputDialog(menuLogout, "Pesquisar Lista:");
-                
-                GerenciadorListasDeFilmes gerenciador = new GerenciadorListasDeFilmes();
-                
-                try {
-                    List<Lista> listas = gerenciador.buscarListasPublicas(filtro);
-                    TelaListasPublicas telaLP;
-                    if(listas.size() > 0){
-                        telaLP = new TelaListasPublicas(null, true, listas);
-                        telaLP.setVisible(true);
-                    } else {
-                        JOptionPane.showMessageDialog(null, "Sua busca nao retornou nenhum resultado.");
-                    }
+                if(filtro != null){
                     
-                } catch (SQLException ex) {
-                    Logger.getLogger(TelaPrincipal.class.getName()).log(Level.SEVERE, null, ex);
+                    GerenciadorListasDeFilmes gerenciador = new GerenciadorListasDeFilmes();
+
+                    try {
+                        List<Lista> listas = gerenciador.buscarListasPublicas(filtro);
+                        TelaListasPublicas telaLP;
+                        if(listas.size() > 0){
+                            telaLP = new TelaListasPublicas(null, true, listas);
+                            telaLP.setVisible(true);
+                        } else {
+                            JOptionPane.showMessageDialog(null, "Sua busca nao retornou nenhum resultado.");
+                        }
+
+                    } catch (SQLException ex) {
+                        Logger.getLogger(TelaPrincipal.class.getName()).log(Level.SEVERE, null, ex);
+                    }
+
                 }
                 
                 

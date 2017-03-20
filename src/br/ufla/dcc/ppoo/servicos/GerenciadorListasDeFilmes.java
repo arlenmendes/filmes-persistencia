@@ -6,6 +6,8 @@
 package br.ufla.dcc.ppoo.servicos;
 
 import br.ufla.dcc.ppoo.dao.ListaDAO;
+import br.ufla.dcc.ppoo.modelo.Avaliacao;
+import br.ufla.dcc.ppoo.modelo.Comentario;
 import br.ufla.dcc.ppoo.modelo.Lista;
 import br.ufla.dcc.ppoo.modelo.Palavra;
 import br.ufla.dcc.ppoo.seguranca.SessaoUsuario;
@@ -33,7 +35,6 @@ public class GerenciadorListasDeFilmes {
     }
     
     public List<Lista> buscarListasUsuarioLogado() throws SQLException {
-        System.out.println(SessaoUsuario.obterInstancia().obterUsuario().obterId());
         List<Lista> listas = new ArrayList<>();
         listas = repositorioListas.buscaPorUsuario(SessaoUsuario.obterInstancia().obterUsuario().obterId());
         return listas;
@@ -85,5 +86,20 @@ public class GerenciadorListasDeFilmes {
             return listas;
         }
         
+    }
+    
+    public void cadastrarListaImportada(Lista l) throws SQLException{
+        l.setUsuario_id(SessaoUsuario.obterInstancia().obterUsuario().obterId());
+        //passa 1 por padrao por que 1 indica lista privada
+        l.setPublica(1);
+        repositorioListas.adicionar(l);
+    }
+    
+    public void avaliarLista(Avaliacao a) throws SQLException {
+        repositorioListas.adicionarAvaliacao(a);
+    }
+    
+    public void comentarLista(Comentario c) throws SQLException {
+        repositorioListas.comentar(c);
     }
 }

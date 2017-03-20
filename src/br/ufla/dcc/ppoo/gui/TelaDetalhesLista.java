@@ -5,27 +5,36 @@
  */
 package br.ufla.dcc.ppoo.gui;
 
+import br.ufla.dcc.ppoo.modelo.Avaliacao;
+import br.ufla.dcc.ppoo.modelo.Comentario;
 import br.ufla.dcc.ppoo.modelo.Lista;
 import br.ufla.dcc.ppoo.modelo.Palavra;
+import br.ufla.dcc.ppoo.seguranca.SessaoUsuario;
 import br.ufla.dcc.ppoo.servicos.GerenciadorListasDeFilmes;
 import java.sql.SQLException;
 import java.util.List;
 import java.util.logging.Level;
 import java.util.logging.Logger;
+import javax.swing.JOptionPane;
 
 /**
  *
  * @author arlen
  */
 public class TelaDetalhesLista extends javax.swing.JDialog {
-
+    Lista lista;
+    Avaliacao avaliacao;
+    GerenciadorListasDeFilmes gerenciadorListasDeFilmes;
     /**
      * Creates new form TelaDetalhesLista
      */
     public TelaDetalhesLista(java.awt.Frame parent, boolean modal, Lista l) throws SQLException {
         super(parent, modal);
         initComponents();
-        carregarTextPane(l);
+        preparaComponenteInicial();
+        lista = l;
+        gerenciadorListasDeFilmes = new GerenciadorListasDeFilmes();
+        carregarTextPane(lista);
     }
 
     /**
@@ -39,27 +48,69 @@ public class TelaDetalhesLista extends javax.swing.JDialog {
 
         jScrollPane1 = new javax.swing.JScrollPane();
         tpLista = new javax.swing.JTextPane();
+        btnAvaliar = new javax.swing.JButton();
+        btnComentar = new javax.swing.JButton();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.DISPOSE_ON_CLOSE);
 
         jScrollPane1.setViewportView(tpLista);
 
+        btnAvaliar.setText("Avaliar");
+        btnAvaliar.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                btnAvaliarActionPerformed(evt);
+            }
+        });
+
+        btnComentar.setText("Comentar");
+        btnComentar.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                btnComentarActionPerformed(evt);
+            }
+        });
+
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(getContentPane());
         getContentPane().setLayout(layout);
         layout.setHorizontalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addComponent(jScrollPane1, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.DEFAULT_SIZE, 400, Short.MAX_VALUE)
+            .addComponent(jScrollPane1, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.DEFAULT_SIZE, 556, Short.MAX_VALUE)
+            .addGroup(layout.createSequentialGroup()
+                .addContainerGap()
+                .addComponent(btnAvaliar)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addComponent(btnComentar)
+                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
         );
         layout.setVerticalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(layout.createSequentialGroup()
-                .addComponent(jScrollPane1, javax.swing.GroupLayout.PREFERRED_SIZE, 252, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addGap(0, 48, Short.MAX_VALUE))
+                .addComponent(jScrollPane1, javax.swing.GroupLayout.DEFAULT_SIZE, 352, Short.MAX_VALUE)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                    .addComponent(btnAvaliar)
+                    .addComponent(btnComentar))
+                .addContainerGap())
         );
 
         pack();
         setLocationRelativeTo(null);
     }// </editor-fold>//GEN-END:initComponents
+
+    private void btnAvaliarActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnAvaliarActionPerformed
+        try {
+            avaliar();
+        } catch (SQLException ex) {
+            JOptionPane.showMessageDialog(null, "Problema ao cadastrar sua avaliacao");
+        }
+    }//GEN-LAST:event_btnAvaliarActionPerformed
+
+    private void btnComentarActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnComentarActionPerformed
+        try {
+            comentar();
+        } catch (SQLException ex) {
+            Logger.getLogger(TelaDetalhesLista.class.getName()).log(Level.SEVERE, null, ex);
+        }
+    }//GEN-LAST:event_btnComentarActionPerformed
 
     /**
      * @param args the command line arguments
@@ -110,6 +161,8 @@ public class TelaDetalhesLista extends javax.swing.JDialog {
     }
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
+    private javax.swing.JButton btnAvaliar;
+    private javax.swing.JButton btnComentar;
     private javax.swing.JScrollPane jScrollPane1;
     private javax.swing.JTextPane tpLista;
     // End of variables declaration//GEN-END:variables
@@ -119,6 +172,88 @@ public class TelaDetalhesLista extends javax.swing.JDialog {
         tpLista.setEditable(false);
         tpLista.setContentType("text/html");
                 
-        tpLista.setText(lista.toStringHtml());
+        tpLista.setText(lista.toStringTextPane());
+    }
+    
+    private void avaliar() throws SQLException {
+        boolean avaliou = false;
+        boolean dono = false;
+        
+        for(Avaliacao a : lista.getAvaliacoes()){
+            if(a.getUsuario_id() == SessaoUsuario.obterInstancia().obterUsuario().obterId()){
+                avaliou = true;
+            }
+        }
+        
+        if(lista.getUsuario_id() == SessaoUsuario.obterInstancia().obterUsuario().obterId()){
+            dono = true;
+        }
+        
+        if(!avaliou){
+            if(!dono){
+                String notaString = "";
+                do{
+                    
+                    notaString = JOptionPane.showInputDialog("De uma nota de 1 a 5 para a lista " + lista.getNome() + ":");
+                    if(notaString != null && !notaString.equals("")){
+                        int nota = 0;
+                        
+                        //trata se o usuario digitar algo diferente de um numero.
+                        try {
+                            nota = Integer.parseInt(notaString);
+                        } catch (Exception e) {
+                            JOptionPane.showMessageDialog(null, "Voce informou um digito invalido!");
+                        }
+                        
+                        
+                        if(nota >= 1 && nota <= 5){
+                            avaliacao = new Avaliacao(nota, lista.getId(), SessaoUsuario.obterInstancia().obterUsuario().obterId());
+                            gerenciadorListasDeFilmes.avaliarLista(avaliacao);
+                            lista.getAvaliacoes().add(avaliacao);
+                            carregarTextPane(lista);
+                            notaString = null;
+                        } else {
+                            JOptionPane.showMessageDialog(null, "Por favor, informe uma nota valida!");
+                        }
+                    }
+                } while(notaString != null);
+                
+            } else {
+                JOptionPane.showMessageDialog(null, "Voce nao pode avaliar sua propria lista!");
+            }
+        } else {
+            JOptionPane.showMessageDialog(null, "Voce ja avaliou esta lista.");
+        }
+    }
+    
+    private void comentar() throws SQLException {
+        String comentario = "";
+        while(comentario.equals("") && comentario != null) {
+            comentario = JOptionPane.showInputDialog("Informe o comentario: (maximo de 144 caracteres)");
+            if(comentario != null && !comentario.equals("") && comentario.length() > 144){
+                JOptionPane.showMessageDialog(null, "Comentario muito grande.");
+            }
+        }
+        
+        if(comentario != null) {
+            if(comentario.length() < 145){
+                Comentario c = new Comentario(comentario, lista.getId());
+                gerenciadorListasDeFilmes.comentarLista(c);
+                lista.getComentarios().add(c);
+                carregarTextPane(lista);
+            } else {
+                
+            }
+        }
+    }
+    
+    private void preparaComponenteInicial() {
+        if(SessaoUsuario.obterInstancia().estahLogado()){
+            btnAvaliar.setEnabled(true);
+            btnComentar.setEnabled(true);
+        } else {
+            btnAvaliar.setEnabled(false);
+            btnComentar.setEnabled(false);
+        }
     }
 }

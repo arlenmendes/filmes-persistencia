@@ -120,8 +120,44 @@ public class FilmeDAO {
             
             res.next();
             f = new Filme(res.getInt("id"), res.getString("nome"), res.getString("genero"), res.getInt("ano"), res.getInt("duracao"), res.getString("descricao"));
+        } else {
+            JOptionPane.showMessageDialog(null, "Erro com a conexao ao Banco de Dados.");
+            return null;
         }
         
         return f;
+    }
+    
+    public List<Filme> adicionarImportados(List<Filme> filmes) throws SQLException {
+        conectar();
+        if(conexao != null) {
+            int usuario_id = filmes.get(0).getUsuario_id();
+            Statement comando = conexao.createStatement();
+            for(Filme f : filmes){
+
+                String sql = "INSERT INTO filme(nome, genero, ano, duracao, descricao, usuario_id)"
+                           + "VALUES('" + f.getNome() + "','" + f.getGenero() + "', " + f.getAno() +", " + f.getDuracao() + ", '" + f.getDescricao() + "', " + f.getUsuario_id() + ")";
+
+                comando.executeUpdate(sql);
+            }
+            
+            String sqlBusca = "SELECT * FROM filme where usuario_id = " + usuario_id + " ORDER BY id DESC LIMIT " + filmes.size();
+            //SELECT * FROM filme WHERE usuario_id = 2 ORDER BY id DESC LIMIT 4;
+            
+            ResultSet respotaRS = comando.executeQuery(sqlBusca);
+            List<Filme> filmesResposta = new ArrayList<>();
+            while(respotaRS.next()) {
+                filmesResposta.add(new Filme(respotaRS.getInt("id"), respotaRS.getString("nome"), respotaRS.getString("genero"), respotaRS.getInt("ano"), respotaRS.getInt("duracao"), respotaRS.getString("descricao")));
+            }
+            
+            comando.close();
+            Conexao.fecharConexao();
+            
+            return filmesResposta;
+            
+        } else {
+            JOptionPane.showMessageDialog(null, "Erro com a conexao ao Banco de Dados.");
+            return null;
+        }
     }
 }
